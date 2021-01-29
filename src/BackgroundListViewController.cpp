@@ -48,8 +48,8 @@ void SelectImage()
 
 void RefreshList(BackgroundListViewController* instance)
 {
+    if (instance->listtxtgroup && instance->listtxtgroup->m_CachedPtr.m_value) UnityEngine::GameObject::Destroy(instance->listtxtgroup->get_gameObject()); 
     for (UnityEngine::UI::Button* button : bgList) UnityEngine::Object::Destroy(button->get_transform()->get_parent()->get_gameObject());
-    if (instance->listtxtgroup) UnityEngine::GameObject::Destroy(instance->listtxtgroup->get_gameObject()); 
     bgList = {};
     DIR* imgdir = opendir(bgDirectoryPath.c_str());
     dirent* fileent;
