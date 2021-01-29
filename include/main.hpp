@@ -1,10 +1,6 @@
 #pragma once
-#include <string>
-#include "modloader/shared/modloader.hpp"
-
 #include "beatsaber-hook/shared/utils/logging.hpp"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
-#include "beatsaber-hook/shared/utils/il2cpp-functions.hpp"
 
 #include "UnityEngine/Texture2D.hpp"
 #include "UnityEngine/GameObject.hpp"

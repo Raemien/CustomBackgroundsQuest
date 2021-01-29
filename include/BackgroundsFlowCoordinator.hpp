@@ -1,5 +1,3 @@
-#include "questui/shared/CustomTypes/Components/Settings/IncrementSetting.hpp"
-#include "questui/shared/BeatSaberUI.hpp"
 #include "custom-types/shared/macros.hpp"
 #include "HMUI/FlowCoordinator.hpp"
 #include "HMUI/ViewController.hpp"

@@ -5,23 +5,16 @@
 using namespace CustomBackgrounds;
 
 #include "modloader/shared/modloader.hpp"
-#include "beatsaber-hook/shared/utils/utils.h"
 #include "beatsaber-hook/shared/utils/logging.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
-#include "beatsaber-hook/shared/utils/il2cpp-functions.hpp"
 #include "beatsaber-hook/shared/utils/typedefs.h"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
 #include "bs-utils/shared/utils.hpp"
 
-#include <string>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <fstream>
-#include <iostream>
 
 #include "questui/shared/QuestUI.hpp"
-#include "questui/shared/BeatSaberUI.hpp"
 #include "custom-types/shared/register.hpp"
 
 #include "UnityEngine/Camera.hpp"
@@ -40,13 +33,12 @@ using namespace CustomBackgrounds;
 #include "UnityEngine/SceneManagement/Scene.hpp"
 #include "GlobalNamespace/MainCamera.hpp"
 
-// using namespace UnityEngine;
 using namespace GlobalNamespace;
 
 UnityEngine::GameObject* backgroundObject;
 UnityEngine::Material* backgroundMat;
 UnityEngine::Texture2D* backgroundTexture;
-long originalCullMask = 0; // used to change back to default culling mask in ui.
+long originalCullMask = 0; // Store the default culling mask to easily revert changes
 
 static ModInfo modInfo;
 

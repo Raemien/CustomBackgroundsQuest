@@ -2,8 +2,6 @@
 #include "BackgroundListViewController.hpp"
 
 #include <dirent.h>
-#include <iostream>
-#include <string>
 #include <list>
 
 #include "questui/shared/BeatSaberUI.hpp"
@@ -14,8 +12,6 @@
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/RectTransform.hpp"
-#include "UnityEngine/RectOffset.hpp"
-#include "HMUI/ViewController.hpp"
 #include "UnityEngine/UI/Button.hpp"
 #include "UnityEngine/UI/LayoutElement.hpp"
 #include "UnityEngine/UI/VerticalLayoutGroup.hpp"

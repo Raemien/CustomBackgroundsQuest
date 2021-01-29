@@ -1,8 +1,6 @@
 #include "main.hpp"
 #include "BackgroundConfigViewController.hpp"
 
-#include <string>
-
 #include "questui/shared/BeatSaberUI.hpp"
 #include "questui/shared/CustomTypes/Components/Backgroundable.hpp"
 #include "questui/shared/CustomTypes/Components/Settings/IncrementSetting.hpp"
