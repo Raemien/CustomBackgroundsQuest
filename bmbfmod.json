@@ -1,0 +1,32 @@
+{
+    "id": "CustomBackgrounds",
+    "name": "Custom Backgrounds",
+    "author": "Raemien",
+    "icon": "cover.png",
+	"coverImageFilename": "cover.png",
+    "description": [
+        "Import your own 360 images and use them as a background.",
+        "Scans the 'CustomBackgrounds' ModData folder for imported images."
+    ],
+    "category": "Gameplay",
+    "gameVersion": "1.13.2",
+    "version": "1.0.0",
+    "platform": "Quest",
+    "components": [
+        {
+            "type": "HookMod",
+            "installAction": {
+                "installLibraryFile": "libcustombgs.so"
+            },
+            "uninstallAction": {
+                "removeLibraryFile": "libcustombgs.so"
+            }
+        },
+		{
+			"type": "HookModLibrary",
+			"installAction": {
+				"installLibraryFile": "libbeatsaber-hook_1_0_12.so"
+			}
+        }
+    ]
+}

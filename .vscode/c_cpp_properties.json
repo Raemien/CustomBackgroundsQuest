@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Quest",
+            "defines": [
+                "MOD_ID=\"CustomBackgrounds\"",
+                "VERSION=\"1.0.0\"",
+                "__GNUC__",
+                "__aarch64__"
+            ],
+            "includePath": [
+                "${workspaceFolder}/**",
+                "d:/UnityEditors/2019.4.9f1/Editor/Data/il2cpp/libil2cpp",
+                "d:/QuestModDev/References/android-ndk-r20/**"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
