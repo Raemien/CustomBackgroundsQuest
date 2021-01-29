@@ -64,25 +64,28 @@ Configuration& getConfig() {
 
 void CreateBGObject()
 {
-    // Create object
-    backgroundObject = UnityEngine::GameObject::CreatePrimitive(UnityEngine::PrimitiveType::Sphere);
-    backgroundObject->set_name(il2cpp_utils::createcsstr("_CustomBackground"));
-    backgroundObject->set_layer(29);
-    UnityEngine::Object::DontDestroyOnLoad(backgroundObject);
+    if (!backgroundObject)
+    {
+        // Create object
+        backgroundObject = UnityEngine::GameObject::CreatePrimitive(UnityEngine::PrimitiveType::Sphere);
+        backgroundObject->set_name(il2cpp_utils::createcsstr("_CustomBackground"));
+        backgroundObject->set_layer(29);
+        UnityEngine::Object::DontDestroyOnLoad(backgroundObject);
 
-    // Material + shader management
-    UnityEngine::Renderer* bgrenderer = backgroundObject->GetComponent<UnityEngine::Renderer*>();
-    backgroundMat = bgrenderer->get_material();
-    bgrenderer->set_sortingOrder(-8192);
-    static auto set_shader = reinterpret_cast<function_ptr_t<void, UnityEngine::Material*, UnityEngine::Shader*>>(il2cpp_functions::resolve_icall("UnityEngine.Material::set_shader"));
-    set_shader(backgroundMat, UnityEngine::Shader::Find(il2cpp_utils::createcsstr("Custom/SimpleTexture")));
-    backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
+        // Material + shader management
+        UnityEngine::Renderer* bgrenderer = backgroundObject->GetComponent<UnityEngine::Renderer*>();
+        backgroundMat = bgrenderer->get_material();
+        bgrenderer->set_sortingOrder(-8192);
+        static auto set_shader = reinterpret_cast<function_ptr_t<void, UnityEngine::Material*, UnityEngine::Shader*>>(il2cpp_functions::resolve_icall("UnityEngine.Material::set_shader"));
+        set_shader(backgroundMat, UnityEngine::Shader::Find(il2cpp_utils::createcsstr("Custom/SimpleTexture")));
+        backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
 
-    // Set transforms
-    UnityEngine::Transform* bgtrans = backgroundObject->get_transform();
-    bgtrans->set_localScale(UnityEngine::Vector3::get_one() * -800);
-    bgtrans->set_localPosition(UnityEngine::Vector3::get_zero());
-    bgtrans->set_localEulerAngles(UnityEngine::Vector3(0, (getConfig().config["rotationOffset"].GetInt() - 90), 180));
+        // Set transforms
+        UnityEngine::Transform* bgtrans = backgroundObject->get_transform();
+        bgtrans->set_localScale(UnityEngine::Vector3::get_one() * -800);
+        bgtrans->set_localPosition(UnityEngine::Vector3::get_zero());
+        bgtrans->set_localEulerAngles(UnityEngine::Vector3(0, (getConfig().config["rotationOffset"].GetInt() - 90), 180));
+    }
 }
 
 void LoadBackground(std::string path)
