@@ -1,4 +1,6 @@
 #include "BGConfig.hpp"
+#include "EnvironmentHider.hpp"
+#include "BackgroundEnvViewController.hpp"
 #include "BackgroundListViewController.hpp"
 #include "BackgroundConfigViewController.hpp"
 #include "BackgroundsFlowCoordinator.hpp"
@@ -17,9 +19,11 @@ using namespace CustomBackgrounds;
 #include "questui/shared/QuestUI.hpp"
 #include "custom-types/shared/register.hpp"
 
+#include "UnityEngine/Color.hpp"
 #include "UnityEngine/Camera.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Object.hpp"
+#include "UnityEngine/Resources.hpp"
 #include "UnityEngine/Vector3.hpp"
 #include "UnityEngine/Renderer.hpp"
 #include "UnityEngine/Material.hpp"
@@ -31,6 +35,9 @@ using namespace CustomBackgrounds;
 #include "UnityEngine/PrimitiveType.hpp"
 #include "UnityEngine/SceneManagement/SceneManager.hpp"
 #include "UnityEngine/SceneManagement/Scene.hpp"
+#include "GlobalNamespace/MultiplayerLobbyAvatarPlace.hpp"
+#include "GlobalNamespace/MenuEnvironmentManager.hpp"
+#include "GlobalNamespace/MenuEnvironmentManager_MenuEnvironmentObjects.hpp"
 #include "GlobalNamespace/MainCamera.hpp"
 
 using namespace GlobalNamespace;
@@ -38,7 +45,7 @@ using namespace GlobalNamespace;
 UnityEngine::GameObject* backgroundObject;
 UnityEngine::Material* backgroundMat;
 UnityEngine::Texture2D* backgroundTexture;
-long originalCullMask = 0; // Store the default culling mask to easily revert changes
+long mainOriginalCullMask = 0; // Store the default culling mask to easily revert changes
 
 static ModInfo modInfo;
 
@@ -97,7 +104,7 @@ void LoadBackground(std::string path)
         if (backgroundMat && success) {
             backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
         }
-        else CreateBGObject();
+        else if (success) CreateBGObject();
     }
 }
 
@@ -126,6 +133,12 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SceneChanged, void, UnityEngine::SceneManageme
     }
 }
 
+MAKE_HOOK_OFFSETLESS(Spectrogram_Awake, void)
+{
+    Spectrogram_Awake();
+    if (backgroundObject) HideGameEnv();
+}
+
 MAKE_HOOK_OFFSETLESS(MainCamera_Awake, void, GlobalNamespace::MainCamera* caminstance)
 {
     MainCamera_Awake(caminstance);
@@ -134,18 +147,16 @@ MAKE_HOOK_OFFSETLESS(MainCamera_Awake, void, GlobalNamespace::MainCamera* camins
     UnityEngine::Camera* maincam = caminstance->camera;
     if (maincam && sceneName == "GameCore" && modcfg["enabled"].GetBool())
     {
-        originalCullMask = (originalCullMask == 0) ? maincam->get_cullingMask() : originalCullMask;
+        mainOriginalCullMask = (mainOriginalCullMask == 0) ? maincam->get_cullingMask() : mainOriginalCullMask;
         if (modcfg["hideEnvironment"].GetBool()) maincam->set_cullingMask(maincam->get_cullingMask() & ~(1 << 14));
         if (modcfg["hideLasers"].GetBool()) maincam->set_cullingMask(maincam->get_cullingMask() & ~(1 << 13));
-
-        // static auto set_layerCullDistances = reinterpret_cast<function_ptr_t<void, UnityEngine::Camera*, float[32]>>(il2cpp_functions::resolve_icall("UnityEngine.Camera::SetLayerCullDistances"));
-        // float distances[32];
-        // distances[0] = 200000;
-        // set_layerCullDistances(maincam, distances);
-
-        // static auto set_layerCullSpherical = reinterpret_cast<function_ptr_t<void, UnityEngine::Camera*, bool>>(il2cpp_functions::resolve_icall("UnityEngine.Camera::set_layerCullSpherical"));
-        // set_layerCullSpherical(maincam, true);
     }
+}
+
+MAKE_HOOK_OFFSETLESS(MenuEnvManager_ShowEnv, void, GlobalNamespace::MenuEnvironmentManager* instance, GlobalNamespace::MenuEnvironmentManager::MenuEnvironmentType envtype)
+{
+    MenuEnvManager_ShowEnv(instance, envtype);
+    if (backgroundObject) HideMenuEnv();
 }
 
 extern "C" void setup(ModInfo& info) {
@@ -162,7 +173,9 @@ extern "C" void load() {
     il2cpp_functions::Init();
     QuestUI::Init();
     INSTALL_HOOK_OFFSETLESS(getLogger(), SceneManager_SceneChanged, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "Internal_ActiveSceneChanged", 2));
+    INSTALL_HOOK_OFFSETLESS(getLogger(), MenuEnvManager_ShowEnv, il2cpp_utils::FindMethodUnsafe("", "MenuEnvironmentManager", "ShowEnvironmentType", 1));
+    INSTALL_HOOK_OFFSETLESS(getLogger(), Spectrogram_Awake, il2cpp_utils::FindMethod("", "Spectrogram", "Awake"));
     INSTALL_HOOK_OFFSETLESS(getLogger(), MainCamera_Awake, il2cpp_utils::FindMethod("", "MainCamera", "Awake"));
-    custom_types::Register::RegisterTypes<::BackgroundsFlowCoordinator, ::BackgroundListViewController, ::BackgroundConfigViewController>();
+    custom_types::Register::RegisterTypes<::BackgroundsFlowCoordinator, ::BackgroundListViewController, ::BackgroundConfigViewController, ::BackgroundEnvViewController>();
     QuestUI::Register::RegisterModSettingsFlowCoordinator<BackgroundsFlowCoordinator*>(modInfo);
 }

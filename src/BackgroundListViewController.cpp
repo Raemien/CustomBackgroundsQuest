@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "EnvironmentHider.hpp"
 #include "BackgroundListViewController.hpp"
 
 #include <dirent.h>
@@ -31,6 +32,7 @@ void OnChangeEnabled(BackgroundListViewController* instance, bool newval)
     instance->bglistscroll->SetActive(newval);
     if (backgroundObject) backgroundObject->SetActive(newval);
     else LoadBackground(bgDirectoryPath + modcfg["selectedFile"].GetString());
+    HideMenuEnv();
 }
 
 void SelectImage()

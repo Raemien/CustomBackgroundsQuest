@@ -74,11 +74,11 @@ void BackgroundConfigViewController::DidActivate(bool firstActivation, bool adde
 
         bool hideenv_initval = getConfig().config["hideEnvironment"].GetBool();
         auto onChangeHideEnvAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideEnv);
-        this->hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Hide Track Rings", hideenv_initval, UnityEngine::Vector2(0, 0), onChangeHideEnvAction);
+        this->hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Hide Environment", hideenv_initval, UnityEngine::Vector2(0, 0), onChangeHideEnvAction);
 
         bool hidelasersinitval = getConfig().config["hideLasers"].GetBool();
         auto onChangeHideLasersAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideLasers);
-        this->hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Hide Lasers", hidelasersinitval, UnityEngine::Vector2(0, 0), onChangeHideLasersAction);
+        this->hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Hide Lights", hidelasersinitval, UnityEngine::Vector2(0, 0), onChangeHideLasersAction);
 
 
         int rotation_initval = getConfig().config["rotationOffset"].GetInt();
