@@ -62,6 +62,8 @@ void HideMenuEnv()
         auto* notePileObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/NotesBehindPlayer"));
         auto* leftBuildObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingLeft"));
         auto* rightBuildObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingRight"));
+        auto* leftBuildObjClone = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingLeft (1)"));
+        auto* rightBuildObjClone = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingRight (1)"));
         auto* multiEnvObj = Resources::FindObjectsOfTypeAll<GlobalNamespace::SetApplicationVersionText*>()->values[1]->get_transform()->get_parent()->get_parent()->get_gameObject();
         
         // Apply Visibility
@@ -70,8 +72,10 @@ void HideMenuEnv()
         HideChildRenderers(notePileObj, false);
         HideChildRenderers(leftBuildObj, false);
         HideChildRenderers(rightBuildObj, false);
+        HideChildRenderers(leftBuildObjClone, false);
+        HideChildRenderers(rightBuildObjClone, false);
 
-        floorObj->GetComponent<MeshRenderer*>()->set_enabled(!bgActive);
+        if (floorObj) floorObj->GetComponent<MeshRenderer*>()->set_enabled(!bgActive);
     }
 }
 

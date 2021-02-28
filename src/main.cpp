@@ -38,6 +38,7 @@ using namespace CustomBackgrounds;
 #include "GlobalNamespace/MultiplayerLobbyAvatarPlace.hpp"
 #include "GlobalNamespace/MenuEnvironmentManager.hpp"
 #include "GlobalNamespace/MenuEnvironmentManager_MenuEnvironmentObjects.hpp"
+#include "GlobalNamespace/TrackLaneRing.hpp"
 #include "GlobalNamespace/MainCamera.hpp"
 
 using namespace GlobalNamespace;
@@ -96,7 +97,9 @@ void LoadBackground(std::string path)
         std::vector<uint8_t> data((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
         Array<uint8_t>* bytes = il2cpp_utils::vectorToArray(data);
 
-        backgroundTexture = UnityEngine::Texture2D::New_ctor(4096, 2048, UnityEngine::TextureFormat::RGBA32, false, false);
+        int width = getConfig().config["imageWidth"].GetInt();
+        int height = std::floor((float)width * (2.0f / 3.0f));
+        backgroundTexture = UnityEngine::Texture2D::New_ctor(width, height, UnityEngine::TextureFormat::RGBA32, false, false);
         bool success = UnityEngine::ImageConversion::LoadImage(backgroundTexture, bytes, false);
         std::string resulttxt = success ? "[CustomBackgrounds] successfully loaded '" + filename + "'." : "[CustomBackgrounds] failed to load '" + filename + "'.";
         getLogger().info(resulttxt);
@@ -133,9 +136,22 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SceneChanged, void, UnityEngine::SceneManageme
     }
 }
 
-MAKE_HOOK_OFFSETLESS(Spectrogram_Awake, void)
+MAKE_HOOK_OFFSETLESS(TrackLaneRing_Init, void, GlobalNamespace::TrackLaneRing* self, UnityEngine::Vector3 pos, UnityEngine::Vector3 offset)
 {
-    Spectrogram_Awake();
+    TrackLaneRing_Init(self, pos, offset);
+    bool hide = getConfig().config["hideRings"].GetBool();
+    auto* renderers = self->GetComponentsInChildren<UnityEngine::Renderer*>();
+    for (size_t i = 0; i < renderers->Length(); i++)
+    {
+        UnityEngine::Renderer* rend = renderers->values[i];
+        rend->get_gameObject()->set_layer(hide ? 14 : 0);
+        rend->set_enabled(!hide);
+    }
+}
+
+MAKE_HOOK_OFFSETLESS(Spectrogram_Awake, void, Il2CppObject* self)
+{
+    Spectrogram_Awake(self);
     if (backgroundObject) HideGameEnv();
 }
 
@@ -174,6 +190,7 @@ extern "C" void load() {
     QuestUI::Init();
     INSTALL_HOOK_OFFSETLESS(getLogger(), SceneManager_SceneChanged, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "Internal_ActiveSceneChanged", 2));
     INSTALL_HOOK_OFFSETLESS(getLogger(), MenuEnvManager_ShowEnv, il2cpp_utils::FindMethodUnsafe("", "MenuEnvironmentManager", "ShowEnvironmentType", 1));
+    INSTALL_HOOK_OFFSETLESS(getLogger(), TrackLaneRing_Init, il2cpp_utils::FindMethodUnsafe("", "TrackLaneRing", "Init", 2));
     INSTALL_HOOK_OFFSETLESS(getLogger(), Spectrogram_Awake, il2cpp_utils::FindMethod("", "Spectrogram", "Awake"));
     INSTALL_HOOK_OFFSETLESS(getLogger(), MainCamera_Awake, il2cpp_utils::FindMethod("", "MainCamera", "Awake"));
     custom_types::Register::RegisterTypes<::BackgroundsFlowCoordinator, ::BackgroundListViewController, ::BackgroundConfigViewController, ::BackgroundEnvViewController>();
