@@ -8,6 +8,7 @@ DECLARE_CLASS_CODEGEN(CustomBackgrounds, BackgroundsFlowCoordinator, HMUI::FlowC
 
     DECLARE_INSTANCE_FIELD(HMUI::ViewController*, bgListView);
     DECLARE_INSTANCE_FIELD(HMUI::ViewController*, bgConfigView);
+    DECLARE_INSTANCE_FIELD(HMUI::ViewController*, bgEnvView);
 
     REGISTER_FUNCTION(BackgroundsFlowCoordinator,
         REGISTER_FIELD(bgListView);

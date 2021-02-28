@@ -1,7 +1,8 @@
 #include "main.hpp"
+#include "BackgroundsFlowCoordinator.hpp"
+#include "BackgroundEnvViewController.hpp"
 #include "BackgroundListViewController.hpp"
 #include "BackgroundConfigViewController.hpp"
-#include "BackgroundsFlowCoordinator.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
 #include "questui/shared/QuestUI.hpp"
@@ -23,7 +24,8 @@ void BackgroundsFlowCoordinator::DidActivate(bool firstActivation, bool addedToH
 
         if (!this->bgListView) this->bgListView = QuestUI::BeatSaberUI::CreateViewController<BackgroundListViewController*>();
         if (!this->bgConfigView) this->bgConfigView = QuestUI::BeatSaberUI::CreateViewController<BackgroundConfigViewController*>();
-        BackgroundsFlowCoordinator::ProvideInitialViewControllers(bgListView, bgConfigView, nullptr, nullptr, nullptr);
+        if (!this->bgEnvView) this->bgEnvView = QuestUI::BeatSaberUI::CreateViewController<BackgroundEnvViewController*>();
+        BackgroundsFlowCoordinator::ProvideInitialViewControllers(bgListView, bgConfigView, bgEnvView, nullptr, nullptr);
     }
 }
 
