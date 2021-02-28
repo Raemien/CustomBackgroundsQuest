@@ -19,7 +19,7 @@ void BackgroundsFlowCoordinator::DidActivate(bool firstActivation, bool addedToH
 {
     if (firstActivation) 
     {
-        this->SetTitle(il2cpp_utils::createcsstr("Custom Skyboxes"), (int)1);
+        this->SetTitle(il2cpp_utils::createcsstr("Backgrounds"), (int)1);
         this->showBackButton = true;
 
         if (!this->bgListView) this->bgListView = QuestUI::BeatSaberUI::CreateViewController<BackgroundListViewController*>();
