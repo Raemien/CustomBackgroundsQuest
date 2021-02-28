@@ -178,7 +178,7 @@ MAKE_HOOK_OFFSETLESS(MenuEnvManager_ShowEnv, void, GlobalNamespace::MenuEnvironm
 extern "C" void setup(ModInfo& info) {
 
     info.id = "CustomBackgrounds";
-    info.version = "1.0.0";
+    info.version = "1.2.5";
     modInfo = info;
     bgDirectoryPath = bs_utils::getDataDir(info);
     getConfig().Load();
