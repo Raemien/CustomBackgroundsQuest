@@ -8,6 +8,7 @@ DECLARE_CLASS_CODEGEN(CustomBackgrounds, BackgroundConfigViewController, HMUI::V
     
     DECLARE_INSTANCE_FIELD(UnityEngine::UI::Toggle*, hideEnvToggle);
     DECLARE_INSTANCE_FIELD(QuestUI::IncrementSetting*, rotationSetting);
+    DECLARE_INSTANCE_FIELD(QuestUI::IncrementSetting*, resolutionSetting);
 
     DECLARE_OVERRIDE_METHOD(void, DidActivate, il2cpp_utils::FindMethodUnsafe("HMUI", "ViewController", "DidActivate", 3), bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);
     DECLARE_OVERRIDE_METHOD(void, DidDeactivate, il2cpp_utils::FindMethodUnsafe("HMUI", "ViewController", "DidDeactivate", 2), bool removedFromHierarchy, bool systemScreenDisabling);

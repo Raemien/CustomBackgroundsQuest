@@ -5,6 +5,8 @@
 #include "questui/shared/CustomTypes/Components/Backgroundable.hpp"
 #include "questui/shared/CustomTypes/Components/Settings/IncrementSetting.hpp"
 
+#include <map>
+
 #include "UnityEngine/Object.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Transform.hpp"
@@ -22,16 +24,31 @@
 using namespace CustomBackgrounds;
 DEFINE_CLASS(BackgroundConfigViewController);
 
-void OnChangeHideEnv(BackgroundConfigViewController* instance, bool newval)
+void OnChangeResolution(BackgroundConfigViewController* instance, float fval)
 {
+    std::map<int, std::string> resmap {{3840, "4k"}, {7680, "8K"}, {11520, "12K"}};
+    int newval = std::round(fval);
     auto& modcfg = getConfig().config;
-    modcfg["hideEnvironment"].SetBool(newval);
-}
-
-void OnChangeHideLasers(BackgroundConfigViewController* instance, bool newval)
-{
-    auto& modcfg = getConfig().config;
-    modcfg["hideLasers"].SetBool(newval);
+    auto* element = instance->resolutionSetting;
+    bool ismin = false;
+    bool ismax = false;
+    if (newval <= 3840) { // Minimum resoulution is 4k
+        newval = 3840;
+        ismin = true;
+    }
+    if (newval >= 11520) { // Maximum resolution is 12k
+        newval = 11520; 
+        ismax = true;
+    }
+    element->GetComponentsInChildren<UnityEngine::UI::Button*>()->values[0]->set_interactable(!ismin);
+    element->GetComponentsInChildren<UnityEngine::UI::Button*>()->values[1]->set_interactable(!ismax);
+    element->CurrentValue = newval;
+    element->Increment = newval;
+    if (resmap.count(newval) == 1) {
+        element->Text->set_text(il2cpp_utils::createcsstr(resmap[newval]));
+    }
+    else element->Text->set_text(il2cpp_utils::createcsstr(std::to_string(newval) + " x " + std::to_string(std::round((float)newval * (2.0f / 3.0f)))));
+    modcfg["imageWidth"].SetInt(newval);
 }
 
 void OnChangeRotation(BackgroundConfigViewController* instance, float newval)
@@ -50,6 +67,7 @@ void BackgroundConfigViewController::DidActivate(bool firstActivation, bool adde
 {
     if(firstActivation && addedToHierarchy) 
     {
+        auto& modcfg = getConfig().config;
         UnityEngine::UI::VerticalLayoutGroup* container = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(get_rectTransform());
         container->set_spacing(0.2f);
         container->GetComponent<UnityEngine::UI::LayoutElement*>()->set_minWidth(25.0);
@@ -70,20 +88,15 @@ void BackgroundConfigViewController::DidActivate(bool firstActivation, bool adde
         configcontainer->set_childForceExpandHeight(false);
         configcontainer->set_childControlHeight(true);
 
-        bool enabled_initval = getConfig().config["enabled"].GetBool();
-
-        bool hideenv_initval = getConfig().config["hideEnvironment"].GetBool();
-        auto onChangeHideEnvAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideEnv);
-        this->hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Hide Environment", hideenv_initval, UnityEngine::Vector2(0, 0), onChangeHideEnvAction);
-
-        bool hidelasersinitval = getConfig().config["hideLasers"].GetBool();
-        auto onChangeHideLasersAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideLasers);
-        this->hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Hide Lights", hidelasersinitval, UnityEngine::Vector2(0, 0), onChangeHideLasersAction);
-
-
-        int rotation_initval = getConfig().config["rotationOffset"].GetInt();
+        int rotation_initval = modcfg["rotationOffset"].GetInt();
         auto onChangeRotationAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(classof(UnityEngine::Events::UnityAction_1<float>*), this, OnChangeRotation);
         this->rotationSetting = QuestUI::BeatSaberUI::CreateIncrementSetting(configcontainer->get_rectTransform(), "Rotation Offset", 0, (int)15, rotation_initval, onChangeRotationAction);;
+        
+        int width_initval = modcfg["imageWidth"].GetInt();
+        auto onChangeResAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(classof(UnityEngine::Events::UnityAction_1<float>*), this, OnChangeResolution);
+        this->resolutionSetting = QuestUI::BeatSaberUI::CreateIncrementSetting(configcontainer->get_rectTransform(), "Target Resolution", 0, width_initval, width_initval, onChangeResAction);
+        QuestUI::BeatSaberUI::AddHoverHint(this->resolutionSetting->get_gameObject(), "WARNING: This will affect load times!");
+        OnChangeResolution(this, width_initval);
     }
 }
 
