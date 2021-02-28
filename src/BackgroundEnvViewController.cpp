@@ -62,13 +62,31 @@ void OnToggleOverride()
     }
 }
 
+void OnChangeHideEnv(BackgroundEnvViewController* instance, bool newval)
+{
+    auto& modcfg = getConfig().config;
+    modcfg["hideEnvironment"].SetBool(newval);
+}
+
+void OnChangeHideRings(BackgroundEnvViewController* instance, bool newval)
+{
+    auto& modcfg = getConfig().config;
+    modcfg["hideRings"].SetBool(newval);
+}
+
+void OnChangeHideLasers(BackgroundEnvViewController* instance, bool newval)
+{
+    auto& modcfg = getConfig().config;
+    modcfg["hideLasers"].SetBool(newval);
+}
+
 void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 {
+    auto& modcfg = getConfig().config;
     if(firstActivation && addedToHierarchy) 
     {
         UnityEngine::UI::VerticalLayoutGroup* container = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(get_rectTransform());
-        // container->set_spacing(0.2f);
-        container->GetComponent<UnityEngine::UI::LayoutElement*>()->set_minWidth(80.0);
+        container->set_spacing(0.2f);
 
         // Title
         auto* titlecontainer = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(container->get_rectTransform());
@@ -82,13 +100,11 @@ void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedTo
 
         // Bool settings
         this->envcontainer = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(container->get_rectTransform());
-        envcontainer->set_childAlignment(UnityEngine::TextAnchor::UpperCenter);
-        envcontainer->set_childForceExpandHeight(false);
-        envcontainer->set_childControlHeight(true);
+        envcontainer->set_padding(UnityEngine::RectOffset::New_ctor(0, 0, 0, 30));
 
         bool enabled_initval = getConfig().config["enabled"].GetBool();
 
-        // Base game's 'Override Environment' tab
+        // Base game's 'Override Environment' panel
         auto* playerData = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::PlayerDataModel*>()->values[0]->playerData;
         auto* _envpanelref = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::EnvironmentOverrideSettingsPanelController*>()->values[0];
         envPanel = UnityEngine::Object::Instantiate(_envpanelref, this->envcontainer->get_rectTransform());
@@ -105,6 +121,23 @@ void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedTo
             dropdown->get_gameObject()->AddComponent<GlobalNamespace::NumberTag*>();
             FixModalView(dropdown);
         }
+
+        auto* togglecontainer = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(container->get_rectTransform());
+        togglecontainer->set_padding(UnityEngine::RectOffset::New_ctor(0, 0, 0, 4));
+        togglecontainer->set_spacing(0.2f);
+
+        bool hideenv_initval = modcfg["hideEnvironment"].GetBool();
+        auto onChangeHideEnvAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideEnv);
+        auto* hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Environment", hideenv_initval, UnityEngine::Vector2(0, 0), onChangeHideEnvAction);
+
+        bool hiderings_initval = modcfg["hideRings"].GetBool();
+        auto onChangeHideRingsAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideRings);
+        auto* hideRingsToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Rings", hiderings_initval, UnityEngine::Vector2(0, 0), onChangeHideRingsAction);
+
+        bool hidelasers_initval = modcfg["hideLasers"].GetBool();
+        auto onChangeHideLasersAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideLasers);
+        auto* hideLasersToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Lights", hidelasers_initval, UnityEngine::Vector2(0, 0), onChangeHideLasersAction);
+
     }
     envPanel->overrideEnvironmentsToggle->set_interactable(envPanel->overrideEnvironmentsToggle->m_IsOn);
 }
