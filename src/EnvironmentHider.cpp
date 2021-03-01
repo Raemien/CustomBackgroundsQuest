@@ -52,7 +52,7 @@ void HideChildLights(GameObject* obj)
 
 void HideMenuEnv()
 {
-    bool ismulti = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment"))->GetComponent<GlobalNamespace::MenuEnvironmentManager*>()->prevMenuEnvironmentType == (int)2;
+    bool ismulti = Resources::FindObjectsOfTypeAll<GlobalNamespace::MenuEnvironmentManager*>()->values[0]->prevMenuEnvironmentType == (int)2;
     bool bgActive = getBGActive();
     if (!ismulti)
     {
