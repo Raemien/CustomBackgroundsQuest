@@ -10,8 +10,8 @@
             ],
             "includePath": [
                 "${workspaceFolder}/**",
-                "d:/UnityEditors/2019.4.9f1/Editor/Data/il2cpp/libil2cpp",
-                "d:/QuestModDev/References/android-ndk-r20/**"
+                "${workspaceFolder}/extern/libil2cpp/il2cpp/libil2cpp",
+                "d:/QuestModDev/References/android-ndk-r22/**"
             ],
             "cStandard": "c11",
             "cppStandard": "c++20",
