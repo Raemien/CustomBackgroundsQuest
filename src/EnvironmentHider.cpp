@@ -5,6 +5,7 @@
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/MeshRenderer.hpp"
+#include "GlobalNamespace/LightManager.hpp"
 #include "GlobalNamespace/MultiplayerLobbyAvatarPlace.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
 #include "beatsaber-hook/shared/utils/typedefs.h"
@@ -44,8 +45,8 @@ void HideChildLights(GameObject* obj)
     for (size_t i = 0; i < rendarray->Length(); i++)
     {
         Renderer* renderer = (Renderer*)rendarray->values[i];
-        if (!renderer || !renderer->m_CachedPtr) continue;
-        if (!std::regex_search(to_utf8(csstrtostr(renderer->get_name())), std::regex("light|bloom", std::regex::icase))) continue;
+        if (!renderer || !renderer->m_CachedPtr || renderer->GetComponent<GlobalNamespace::LightManager*>()) continue;
+        if (!std::regex_search(to_utf8(csstrtostr(renderer->get_name())), std::regex("bloom|light", std::regex::icase))) continue;
         renderer->get_gameObject()->set_layer(13);
     }
 }
@@ -83,9 +84,13 @@ void HideGameEnv()
 {
     GameObject* environmentObj = GameObject::Find(il2cpp_utils::createcsstr("Environment"));
     GameObject* playersPlaceObj = GameObject::Find(il2cpp_utils::createcsstr("Environment/PlayersPlace"));
+    GameObject* coreLightingObj = GameObject::Find(il2cpp_utils::createcsstr("Environment/CoreLighting"));
     
     HideChildLights(environmentObj);
-    if(!getConfig().config["hideEnvironment"].GetBool()) return;
-    HideChildRenderers(environmentObj, true);
-    HideChildRenderers(playersPlaceObj, true, true);
+    if(getConfig().config["hideEnvironment"].GetBool())
+    {
+        HideChildRenderers(environmentObj, true);
+        HideChildRenderers(playersPlaceObj, true, true);
+    }
+    HideChildRenderers(coreLightingObj, true, true);
 }
