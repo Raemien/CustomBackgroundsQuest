@@ -62,19 +62,19 @@ void OnToggleOverride()
     }
 }
 
-void OnChangeHideEnv(BackgroundEnvViewController* instance, bool newval)
+void OnChangeHideEnv(bool newval)
 {
     auto& modcfg = getConfig().config;
     modcfg["hideEnvironment"].SetBool(newval);
 }
 
-void OnChangeHideRings(BackgroundEnvViewController* instance, bool newval)
+void OnChangeHideRings(bool newval)
 {
     auto& modcfg = getConfig().config;
     modcfg["hideRings"].SetBool(newval);
 }
 
-void OnChangeHideLasers(BackgroundEnvViewController* instance, bool newval)
+void OnChangeHideLasers(bool newval)
 {
     auto& modcfg = getConfig().config;
     modcfg["hideLasers"].SetBool(newval);
@@ -127,16 +127,13 @@ void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedTo
         togglecontainer->set_spacing(0.2f);
 
         bool hideenv_initval = modcfg["hideEnvironment"].GetBool();
-        auto onChangeHideEnvAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideEnv);
-        auto* hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Environment", hideenv_initval, UnityEngine::Vector2(0, 0), onChangeHideEnvAction);
+        auto* hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Environment", hideenv_initval, UnityEngine::Vector2(0, 0), OnChangeHideEnv);
 
         bool hiderings_initval = modcfg["hideRings"].GetBool();
-        auto onChangeHideRingsAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideRings);
-        auto* hideRingsToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Rings", hiderings_initval, UnityEngine::Vector2(0, 0), onChangeHideRingsAction);
+        auto* hideRingsToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Rings", hiderings_initval, UnityEngine::Vector2(0, 0), OnChangeHideRings);
 
         bool hidelasers_initval = modcfg["hideLasers"].GetBool();
-        auto onChangeHideLasersAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeHideLasers);
-        auto* hideLasersToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Lights", hidelasers_initval, UnityEngine::Vector2(0, 0), onChangeHideLasersAction);
+        auto* hideLasersToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Lights", hidelasers_initval, UnityEngine::Vector2(0, 0), OnChangeHideLasers);
 
     }
     envPanel->overrideEnvironmentsToggle->set_interactable(envPanel->overrideEnvironmentsToggle->m_IsOn);

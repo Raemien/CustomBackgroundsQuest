@@ -23,13 +23,14 @@
 using namespace CustomBackgrounds;
 DEFINE_CLASS(BackgroundListViewController);
 
+BackgroundListViewController* ListView;
 std::list<UnityEngine::UI::Button*> bgList = {};
 
-void OnChangeEnabled(BackgroundListViewController* instance, bool newval)
+void OnChangeEnabled(bool newval)
 {
     auto& modcfg = getConfig().config;
     modcfg["enabled"].SetBool(newval);
-    instance->bglistscroll->SetActive(newval);
+    ListView->bglistscroll->SetActive(newval);
     if (backgroundObject) backgroundObject->SetActive(newval);
     else LoadBackground(bgDirectoryPath + modcfg["selectedFile"].GetString());
     HideMenuEnv();
@@ -48,9 +49,9 @@ void SelectImage()
     }
 }
 
-void RefreshList(BackgroundListViewController* instance)
+void RefreshList()
 {
-    if (instance->listtxtgroup && instance->listtxtgroup->m_CachedPtr.m_value) UnityEngine::GameObject::Destroy(instance->listtxtgroup->get_gameObject()); 
+    if (ListView->listtxtgroup && ListView->listtxtgroup->m_CachedPtr.m_value) UnityEngine::GameObject::Destroy(ListView->listtxtgroup->get_gameObject()); 
     for (UnityEngine::UI::Button* button : bgList) UnityEngine::Object::Destroy(button->get_transform()->get_parent()->get_gameObject());
     bgList = {};
     DIR* imgdir = opendir(bgDirectoryPath.c_str());
@@ -62,22 +63,22 @@ void RefreshList(BackgroundListViewController* instance)
         
         if (filename.ends_with(".png") || filename.ends_with(".jpg") || filename.ends_with(".jpeg"))
         {
-            UnityEngine::UI::HorizontalLayoutGroup* rowgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(instance->bglistscroll->get_transform());
-            auto onSelectBG = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(classof(UnityEngine::Events::UnityAction*), instance, SelectImage);
-            UnityEngine::UI::Button* button = QuestUI::BeatSaberUI::CreateUIButton(rowgroup->get_rectTransform(), fileent->d_name, onSelectBG);
+            UnityEngine::UI::HorizontalLayoutGroup* rowgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(ListView->bglistscroll->get_transform());
+            UnityEngine::UI::Button* button = QuestUI::BeatSaberUI::CreateUIButton(rowgroup->get_rectTransform(), fileent->d_name, SelectImage);
             button->get_gameObject()->GetComponentInChildren<TMPro::TextMeshProUGUI*>()->set_fontStyle(2);
             bgList.push_back(button);
         }
     }
     if (bgList.size() == 0)
     {
-        instance->listtxtgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(instance->bglistscroll->get_transform());
-        QuestUI::BeatSaberUI::CreateText(instance->listtxtgroup->get_rectTransform(), "No background images were found!\nPlease install a background pack to continue.", false);
+        ListView->listtxtgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(ListView->bglistscroll->get_transform());
+        QuestUI::BeatSaberUI::CreateText(ListView->listtxtgroup->get_rectTransform(), "No background images were found!\nPlease install a background pack to continue.", false);
     }
 }
 
 void BackgroundListViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 {
+    ListView = this;
     if(firstActivation && addedToHierarchy) 
     {
         UnityEngine::UI::VerticalLayoutGroup* container = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(get_rectTransform());
@@ -95,8 +96,7 @@ void BackgroundListViewController::DidActivate(bool firstActivation, bool addedT
         configcontainer->set_childControlHeight(true);
 
         bool enabled_initval = getConfig().config["enabled"].GetBool();
-        auto onChangeEnabledAction = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(classof(UnityEngine::Events::UnityAction_1<bool>*), this, OnChangeEnabled);
-        this->masterEnabled = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Enable Custom Backgrounds", enabled_initval, UnityEngine::Vector2(0, 0), onChangeEnabledAction);
+        this->masterEnabled = QuestUI::BeatSaberUI::CreateToggle(configcontainer->get_rectTransform(), "Enable Custom Backgrounds", enabled_initval, UnityEngine::Vector2(0, 0), OnChangeEnabled);
 
         // Image List (recursively adds buttons as ListView isn't an easy type to deal with)
         this->bglistscroll = QuestUI::BeatSaberUI::CreateScrollView(container->get_rectTransform());
@@ -109,7 +109,7 @@ void BackgroundListViewController::DidActivate(bool firstActivation, bool addedT
 
         this->bglistscroll->get_gameObject()->SetActive(enabled_initval);
     }
-    RefreshList(this);
+    RefreshList();
 }
 
 void BackgroundListViewController::DidDeactivate(bool removedFromHierarchy, bool systemScreenDisabling)
