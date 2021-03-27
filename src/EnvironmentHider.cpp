@@ -10,7 +10,6 @@
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
 #include "beatsaber-hook/shared/utils/typedefs.h"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
-#include "GlobalNamespace/SetApplicationVersionText.hpp"
 
 #include "GlobalNamespace/MenuEnvironmentManager.hpp"
 #include "GlobalNamespace/MenuEnvironmentManager_MenuEnvironmentObjects.hpp"
@@ -23,6 +22,19 @@ using namespace UnityEngine;
 bool getBGActive()
 {
     return (backgroundObject && backgroundObject->get_activeSelf());
+}
+
+UnityEngine::GameObject* FindMultiplayerPlatform()
+{
+    Array<GlobalNamespace::MultiplayerLobbyAvatarPlace*>* platforms = Resources::FindObjectsOfTypeAll<GlobalNamespace::MultiplayerLobbyAvatarPlace*>();
+    for (size_t i = 0; i < platforms->Length(); i++)
+    {
+        UnityEngine::Transform* plat = platforms->values[i]->get_transform();
+        if (plat->get_parent() != nullptr) {
+            return plat->get_parent()->get_gameObject();
+        }
+    }
+    return nullptr;
 }
 
 void HideChildRenderers(GameObject* obj, bool onlymeshes, bool unhide = false)
@@ -60,23 +72,19 @@ void HideMenuEnv()
         // Find Objects
         auto* floorObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/Ground"));
         auto* notesObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/Notes"));
-        auto* notePileObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/NotesBehindPlayer"));
-        auto* leftBuildObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingLeft"));
-        auto* rightBuildObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingRight"));
-        auto* leftBuildObjClone = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingLeft (1)"));
-        auto* rightBuildObjClone = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/NearBuildingRight (1)"));
-        auto* multiEnvObj = Resources::FindObjectsOfTypeAll<GlobalNamespace::SetApplicationVersionText*>()->values[1]->get_transform()->get_parent()->get_parent()->get_gameObject();
+        auto* notePileObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/PileOfNotes"));
+        auto* multiEnvObj = FindMultiplayerPlatform();
         
         // Apply Visibility
         multiEnvObj->SetActive(bgActive);
         HideChildRenderers(notesObj, false);
         HideChildRenderers(notePileObj, false);
-        HideChildRenderers(leftBuildObj, false);
-        HideChildRenderers(rightBuildObj, false);
-        HideChildRenderers(leftBuildObjClone, false);
-        HideChildRenderers(rightBuildObjClone, false);
 
         if (floorObj) floorObj->GetComponent<MeshRenderer*>()->set_enabled(!bgActive);
+        if (bgActive) {
+            HideChildRenderers(multiEnvObj, false);
+            HideChildRenderers(multiEnvObj->Find(il2cpp_utils::createcsstr("LobbyAvatarPlace")), false, true);
+        }
     }
 }
 
