@@ -49,3 +49,4 @@ extern/
 CustomBackgrounds.zip
 qpm.shared.json
 Android.mk.backup
+*.qmod

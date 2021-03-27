@@ -1,0 +1,18 @@
+{
+    "_QPVersion": "0.1.0",
+    "name": "Custom Backgrounds",
+    "id": "CustomBackgrounds",
+    "author": "Raemien",
+    "version": "1.2.6",
+    "packageId": "com.beatgames.beatsaber",
+    "packageVersion": "1.14.0",
+    "type": "Cosmetic",
+    "modFiles": [
+        "libcustombgs.so"
+    ],
+    "libraryFiles": [
+        "libbeatsaber-hook_1_2_4.so"
+    ],
+    "fileCopies": [
+    ]
+}
