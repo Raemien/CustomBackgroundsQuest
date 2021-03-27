@@ -7,4 +7,4 @@ if (-not ($PSVersionTable.PSEdition -eq "Core")) {
 }
 
 & $buildScript NDK_PROJECT_PATH=$PSScriptRoot APP_BUILD_SCRIPT=$PSScriptRoot/Android.mk NDK_APPLICATION_MK=$PSScriptRoot/Application.mk
-Compress-Archive -Path "./libs/arm64-v8a/libcustombgs.so","./bmbfmod.json", "./cover.png", "./libs/arm64-v8a/libbeatsaber-hook_1_0_12.so" -DestinationPath "./CustomBackgrounds.zip" -Update
+Compress-Archive -Path "./libs/arm64-v8a/libcustombgs.so","./bmbfmod.json", "./cover.png", "./libs/arm64-v8a/libbeatsaber-hook_1_2_4.so" -DestinationPath "./CustomBackgrounds.zip" -Update
