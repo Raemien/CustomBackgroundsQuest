@@ -37,11 +37,6 @@
       "id": "custom-types",
       "versionRange": "^0.5.1",
       "additionalData": {}
-    },
-    {
-      "id": "bs-utils",
-      "versionRange": "^0.5.9",
-      "additionalData": {}
     }
   ],
   "additionalData": {}

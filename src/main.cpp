@@ -11,7 +11,6 @@ using namespace CustomBackgrounds;
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
 #include "beatsaber-hook/shared/utils/typedefs.h"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
-#include "bs-utils/shared/utils.hpp"
 
 #include <sys/stat.h>
 #include <fstream>
@@ -180,7 +179,7 @@ extern "C" void setup(ModInfo& info) {
     info.id = "CustomBackgrounds";
     info.version = "1.2.6";
     modInfo = info;
-    bgDirectoryPath = bs_utils::getDataDir(info);
+    bgDirectoryPath = getDataDir(info);
     getConfig().Load();
 }
 

@@ -52,12 +52,6 @@ LOCAL_MODULE := custom-types
 LOCAL_EXPORT_C_INCLUDES := extern/custom-types
 LOCAL_SRC_FILES := extern/libcustom-types.so
 include $(PREBUILT_SHARED_LIBRARY)
-# Creating prebuilt for dependency: bs-utils - version: 0.5.9
-include $(CLEAR_VARS)
-LOCAL_MODULE := bs-utils
-LOCAL_EXPORT_C_INCLUDES := extern/bs-utils
-LOCAL_SRC_FILES := extern/libbs-utils.so
-include $(PREBUILT_SHARED_LIBRARY)
 
 # If you would like to use more shared libraries (such as custom UI, utils, or more) add them here, following the format above.
 # In addition, ensure that you add them to the shared library build below.
@@ -72,7 +66,6 @@ LOCAL_SHARED_LIBRARIES += beatsaber-hook_1_2_4
 LOCAL_SHARED_LIBRARIES += codegen_0_7_0
 LOCAL_SHARED_LIBRARIES += questui
 LOCAL_SHARED_LIBRARIES += custom-types
-LOCAL_SHARED_LIBRARIES += bs-utils
 LOCAL_LDLIBS += -llog
 LOCAL_CFLAGS += -I'./extern/libil2cpp/il2cpp/libil2cpp' -I'./shared' -I'./extern' -I'extern/codegen/include'
 LOCAL_CPPFLAGS += -std=c++2a
