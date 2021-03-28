@@ -20,6 +20,7 @@ using namespace CustomBackgrounds;
 
 #include "UnityEngine/Color.hpp"
 #include "UnityEngine/Camera.hpp"
+#include "UnityEngine/Component.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Object.hpp"
 #include "UnityEngine/Resources.hpp"
@@ -76,7 +77,7 @@ void CreateBGObject()
         backgroundMat = bgrenderer->get_material();
         bgrenderer->set_sortingOrder(-8192);
         static auto set_shader = reinterpret_cast<function_ptr_t<void, UnityEngine::Material*, UnityEngine::Shader*>>(il2cpp_functions::resolve_icall("UnityEngine.Material::set_shader"));
-        set_shader(backgroundMat, UnityEngine::Shader::Find(il2cpp_utils::createcsstr("Custom/SimpleTexture")));
+        set_shader(backgroundMat, UnityEngine::Shader::Find(il2cpp_utils::createcsstr("TextMeshPro/Sprite")));
         backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
 
         // Set transforms
@@ -98,6 +99,7 @@ void LoadBackground(std::string path)
 
         int width = getConfig().config["imageWidth"].GetInt();
         int height = std::floor((float)width * (2.0f / 3.0f));
+        UnityEngine::Component::Destroy(backgroundTexture);
         backgroundTexture = UnityEngine::Texture2D::New_ctor(width, height, UnityEngine::TextureFormat::RGBA32, false, false);
         bool success = UnityEngine::ImageConversion::LoadImage(backgroundTexture, bytes, false);
         std::string resulttxt = success ? "[CustomBackgrounds] successfully loaded '" + filename + "'." : "[CustomBackgrounds] failed to load '" + filename + "'.";
@@ -126,7 +128,7 @@ void InitBackgrounds()
 MAKE_HOOK_OFFSETLESS(SceneManager_SceneChanged, void, UnityEngine::SceneManagement::Scene previousScene, UnityEngine::SceneManagement::Scene nextScene)
 {
     SceneManager_SceneChanged(previousScene, nextScene);
-    std::__ndk1::string_view nextSceneName = to_utf8(csstrtostr(nextScene.get_name()));
+    std::string nextSceneName = to_utf8(csstrtostr(nextScene.get_name()));
     auto& modcfg = getConfig().config;
     if ((nextSceneName == "HealthWarning" || nextSceneName == "MenuViewControllers" ) && !backgroundObject && modcfg["enabled"].GetBool())
     {
