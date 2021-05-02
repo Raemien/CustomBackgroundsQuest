@@ -3,15 +3,17 @@
     "name": "Custom Backgrounds",
     "id": "CustomBackgrounds",
     "author": "Raemien",
-    "version": "1.2.6",
+	"coverImage": "cover.png",
+    "description": "Import your own 360 images as custom skyboxes!\nScans the 'CustomBackgrounds' ModData folder for imported images.",
+    "version": "1.2.7",
     "packageId": "com.beatgames.beatsaber",
-    "packageVersion": "1.14.0",
+    "packageVersion": "1.15.0",
     "type": "Cosmetic",
     "modFiles": [
         "libcustombgs.so"
     ],
     "libraryFiles": [
-        "libbeatsaber-hook_1_2_4.so"
+        "libbeatsaber-hook_1_3_3.so"
     ],
     "fileCopies": [
     ]
