@@ -21,7 +21,7 @@
 #include "TMPro/TextMeshProUGUI.hpp"
 
 using namespace CustomBackgrounds;
-DEFINE_CLASS(BackgroundListViewController);
+DEFINE_TYPE(BackgroundListViewController);
 
 BackgroundListViewController* ListView;
 std::list<UnityEngine::UI::Button*> bgList = {};
@@ -44,6 +44,7 @@ void SelectImage()
         {
             std::string filename = to_utf8(csstrtostr(button->GetComponentInChildren<TMPro::TextMeshProUGUI*>()->get_text()));
             getConfig().config["selectedFile"].SetString(filename, getConfig().config.GetAllocator());
+            getConfig().Write();
             LoadBackground(bgDirectoryPath + filename);
         }
     }
@@ -72,7 +73,7 @@ void RefreshList()
     if (bgList.size() == 0)
     {
         ListView->listtxtgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(ListView->bglistscroll->get_transform());
-        QuestUI::BeatSaberUI::CreateText(ListView->listtxtgroup->get_rectTransform(), "No background images were found!\nPlease install a background pack to continue.", false);
+        QuestUI::BeatSaberUI::CreateText(ListView->listtxtgroup->get_rectTransform(), "No background images were found!\nPlease install a background to continue.", false);
     }
 }
 

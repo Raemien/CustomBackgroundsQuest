@@ -36,7 +36,7 @@
 #include "Zenject/DiContainer.hpp"
 
 using namespace CustomBackgrounds;
-DEFINE_CLASS(BackgroundEnvViewController);
+DEFINE_TYPE(BackgroundEnvViewController);
 
 Zenject::DiContainer* diContainer = nullptr;
 GlobalNamespace::EnvironmentOverrideSettingsPanelController* envPanel = nullptr;
