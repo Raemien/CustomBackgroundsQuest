@@ -3,6 +3,7 @@
 #include "BackgroundListViewController.hpp"
 
 #include <dirent.h>
+#include <regex>
 #include <list>
 
 #include "questui/shared/BeatSaberUI.hpp"
@@ -62,7 +63,7 @@ void RefreshList()
         std::string filename = fileent->d_name;
         for (char &ch : filename) ch = tolower(ch);
         
-        if (filename.ends_with(".png") || filename.ends_with(".jpg") || filename.ends_with(".jpeg"))
+        if (std::regex_search(filename, std::regex(".png|.jpg|.jpeg")))
         {
             UnityEngine::UI::HorizontalLayoutGroup* rowgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(ListView->bglistscroll->get_transform());
             UnityEngine::UI::Button* button = QuestUI::BeatSaberUI::CreateUIButton(rowgroup->get_rectTransform(), fileent->d_name, SelectImage);
@@ -70,11 +71,12 @@ void RefreshList()
             bgList.push_back(button);
         }
     }
-    if (bgList.size() == 0)
+    if (bgList.size() < 1)
     {
         ListView->listtxtgroup = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(ListView->bglistscroll->get_transform());
         QuestUI::BeatSaberUI::CreateText(ListView->listtxtgroup->get_rectTransform(), "No background images were found!\nPlease install a background to continue.", false);
     }
+    (void)closedir(imgdir);
 }
 
 void BackgroundListViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
