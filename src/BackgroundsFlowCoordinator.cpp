@@ -13,7 +13,7 @@
 #include "HMUI/FlowCoordinator.hpp"
 
 using namespace CustomBackgrounds;
-DEFINE_TYPE(BackgroundsFlowCoordinator);
+DEFINE_TYPE(CustomBackgrounds, BackgroundsFlowCoordinator);
 
 void BackgroundsFlowCoordinator::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 {

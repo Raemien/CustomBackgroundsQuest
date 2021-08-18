@@ -22,7 +22,7 @@
 #include "TMPro/TextMeshProUGUI.hpp"
 
 using namespace CustomBackgrounds;
-DEFINE_TYPE(BackgroundConfigViewController);
+DEFINE_TYPE(CustomBackgrounds, BackgroundConfigViewController);
 
 BackgroundConfigViewController* ConfigView;
 

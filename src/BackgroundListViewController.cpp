@@ -22,7 +22,7 @@
 #include "TMPro/TextMeshProUGUI.hpp"
 
 using namespace CustomBackgrounds;
-DEFINE_TYPE(BackgroundListViewController);
+DEFINE_TYPE(CustomBackgrounds, BackgroundListViewController);
 
 BackgroundListViewController* ListView;
 std::list<UnityEngine::UI::Button*> bgList = {};
