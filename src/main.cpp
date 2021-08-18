@@ -10,6 +10,7 @@ using namespace CustomBackgrounds;
 #include "beatsaber-hook/shared/utils/logging.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
 #include "beatsaber-hook/shared/utils/typedefs.h"
+#include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
 
 #include <sys/stat.h>
@@ -35,10 +36,12 @@ using namespace CustomBackgrounds;
 #include "UnityEngine/PrimitiveType.hpp"
 #include "UnityEngine/SceneManagement/SceneManager.hpp"
 #include "UnityEngine/SceneManagement/Scene.hpp"
+
 #include "GlobalNamespace/MultiplayerLobbyAvatarPlace.hpp"
 #include "GlobalNamespace/MenuEnvironmentManager.hpp"
 #include "GlobalNamespace/MenuEnvironmentManager_MenuEnvironmentObjects.hpp"
 #include "GlobalNamespace/TrackLaneRing.hpp"
+#include "GlobalNamespace/Spectrogram.hpp"
 #include "GlobalNamespace/MainCamera.hpp"
 
 using namespace GlobalNamespace;
@@ -103,7 +106,7 @@ void LoadBackground(std::string path)
         backgroundTexture = UnityEngine::Texture2D::New_ctor(width, height, UnityEngine::TextureFormat::RGBA32, false, false);
         bool success = UnityEngine::ImageConversion::LoadImage(backgroundTexture, bytes, false);
         std::string resulttxt = success ? "[CustomBackgrounds] successfully loaded '" + filename + "'." : "[CustomBackgrounds] failed to load '" + filename + "'.";
-        getLogger().info(resulttxt);
+        getLogger().info("%s", resulttxt.c_str());
 
         if (backgroundMat && success) {
             backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
@@ -125,7 +128,7 @@ void InitBackgrounds()
     }
 }
 
-MAKE_HOOK_OFFSETLESS(SceneManager_SceneChanged, void, UnityEngine::SceneManagement::Scene previousScene, UnityEngine::SceneManagement::Scene nextScene)
+MAKE_HOOK_MATCH(SceneManager_SceneChanged, &UnityEngine::SceneManagement::SceneManager::Internal_ActiveSceneChanged, void, UnityEngine::SceneManagement::Scene previousScene, UnityEngine::SceneManagement::Scene nextScene)
 {
     SceneManager_SceneChanged(previousScene, nextScene);
     std::string nextSceneName = to_utf8(csstrtostr(nextScene.get_name()));
@@ -137,11 +140,11 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SceneChanged, void, UnityEngine::SceneManageme
     }
 }
 
-MAKE_HOOK_OFFSETLESS(TrackLaneRing_Init, void, GlobalNamespace::TrackLaneRing* self, UnityEngine::Vector3 pos, UnityEngine::Vector3 offset)
+MAKE_HOOK_MATCH(TrackLaneRing_Init, &GlobalNamespace::TrackLaneRing::Init, void, GlobalNamespace::TrackLaneRing* instance, UnityEngine::Vector3 pos, UnityEngine::Vector3 offset)
 {
-    TrackLaneRing_Init(self, pos, offset);
+    TrackLaneRing_Init(instance, pos, offset);
     bool hide = getConfig().config["hideRings"].GetBool();
-    auto* renderers = self->GetComponentsInChildren<UnityEngine::Renderer*>();
+    auto* renderers = instance->GetComponentsInChildren<UnityEngine::Renderer*>();
     for (size_t i = 0; i < renderers->Length(); i++)
     {
         UnityEngine::Renderer* rend = renderers->values[i];
@@ -150,19 +153,19 @@ MAKE_HOOK_OFFSETLESS(TrackLaneRing_Init, void, GlobalNamespace::TrackLaneRing* s
     }
 }
 
-MAKE_HOOK_OFFSETLESS(Spectrogram_Awake, void, Il2CppObject* self)
+MAKE_HOOK_MATCH(Spectrogram_Awake, &GlobalNamespace::Spectrogram::Awake, void, GlobalNamespace::Spectrogram* instance)
 {
-    Spectrogram_Awake(self);
+    Spectrogram_Awake(instance);
     if (backgroundObject) HideGameEnv();
 }
 
-MAKE_HOOK_OFFSETLESS(MainCamera_Awake, void, GlobalNamespace::MainCamera* caminstance)
+MAKE_HOOK_MATCH(MainCamera_Awake, &GlobalNamespace::MainCamera::Awake, void, GlobalNamespace::MainCamera* caminstance)
 {
     MainCamera_Awake(caminstance);
     auto& modcfg = getConfig().config;
-    std::__ndk1::string_view sceneName = to_utf8(csstrtostr(UnityEngine::SceneManagement::SceneManager::GetActiveScene().get_name()));
+    Il2CppString* sceneName = UnityEngine::SceneManagement::SceneManager::GetActiveScene().get_name();
     UnityEngine::Camera* maincam = caminstance->camera;
-    if (maincam && sceneName == "GameCore" && modcfg["enabled"].GetBool())
+    if (maincam && sceneName == il2cpp_utils::newcsstr("GameCore") && modcfg["enabled"].GetBool())
     {
         mainOriginalCullMask = (mainOriginalCullMask == 0) ? maincam->get_cullingMask() : mainOriginalCullMask;
         if (modcfg["hideEnvironment"].GetBool()) maincam->set_cullingMask(maincam->get_cullingMask() & ~(1 << 14));
@@ -170,7 +173,7 @@ MAKE_HOOK_OFFSETLESS(MainCamera_Awake, void, GlobalNamespace::MainCamera* camins
     }
 }
 
-MAKE_HOOK_OFFSETLESS(MenuEnvManager_ShowEnv, void, GlobalNamespace::MenuEnvironmentManager* instance, GlobalNamespace::MenuEnvironmentManager::MenuEnvironmentType envtype)
+MAKE_HOOK_MATCH(MenuEnvManager_ShowEnv, &GlobalNamespace::MenuEnvironmentManager::ShowEnvironmentType, void, GlobalNamespace::MenuEnvironmentManager* instance, GlobalNamespace::MenuEnvironmentManager::MenuEnvironmentType envtype)
 {
     MenuEnvManager_ShowEnv(instance, envtype);
     if (backgroundObject) HideMenuEnv();
@@ -189,11 +192,11 @@ extern "C" void load() {
     if (!LoadConfig()) SetupConfig();
     il2cpp_functions::Init();
     QuestUI::Init();
-    INSTALL_HOOK_OFFSETLESS(getLogger(), SceneManager_SceneChanged, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "Internal_ActiveSceneChanged", 2));
-    INSTALL_HOOK_OFFSETLESS(getLogger(), MenuEnvManager_ShowEnv, il2cpp_utils::FindMethodUnsafe("", "MenuEnvironmentManager", "ShowEnvironmentType", 1));
-    INSTALL_HOOK_OFFSETLESS(getLogger(), TrackLaneRing_Init, il2cpp_utils::FindMethodUnsafe("", "TrackLaneRing", "Init", 2));
-    INSTALL_HOOK_OFFSETLESS(getLogger(), Spectrogram_Awake, il2cpp_utils::FindMethod("", "Spectrogram", "Awake"));
-    INSTALL_HOOK_OFFSETLESS(getLogger(), MainCamera_Awake, il2cpp_utils::FindMethod("", "MainCamera", "Awake"));
-    custom_types::Register::RegisterTypes<::BackgroundsFlowCoordinator, ::BackgroundListViewController, ::BackgroundConfigViewController, ::BackgroundEnvViewController>();
+    INSTALL_HOOK(getLogger(), SceneManager_SceneChanged);
+    INSTALL_HOOK(getLogger(), MenuEnvManager_ShowEnv);
+    INSTALL_HOOK(getLogger(), TrackLaneRing_Init);
+    INSTALL_HOOK(getLogger(), Spectrogram_Awake);
+    INSTALL_HOOK(getLogger(), MainCamera_Awake);
+    custom_types::Register::AutoRegister();
     QuestUI::Register::RegisterModSettingsFlowCoordinator<BackgroundsFlowCoordinator*>(modInfo);
 }
