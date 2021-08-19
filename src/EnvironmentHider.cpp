@@ -70,9 +70,9 @@ void HideMenuEnv()
     if (!ismulti)
     {
         // Find Objects
-        auto* floorObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/Ground"));
-        auto* notesObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/Notes"));
-        auto* notePileObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironment/DefaultEnvironment/PileOfNotes"));
+        auto* floorObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironmentManager/DefaultMenuEnvironment/BasicMenuGround"));
+        auto* notesObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironmentManager/DefaultMenuEnvironment/Notes"));
+        auto* notePileObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironmentManager/DefaultMenuEnvironment/PileOfNotes"));
         auto* multiEnvObj = FindMultiplayerPlatform();
         
         // Apply Visibility
