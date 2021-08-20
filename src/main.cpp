@@ -1,5 +1,6 @@
 #include "BGConfig.hpp"
 #include "EnvironmentHider.hpp"
+#include "Helpers/AssetHelper.hpp"
 #include "BackgroundEnvViewController.hpp"
 #include "BackgroundListViewController.hpp"
 #include "BackgroundConfigViewController.hpp"
@@ -71,17 +72,16 @@ void CreateBGObject()
     {
         // Create object
         backgroundObject = UnityEngine::GameObject::CreatePrimitive(UnityEngine::PrimitiveType::Sphere);
-        backgroundObject->set_name(il2cpp_utils::createcsstr("_CustomBackground"));
+        backgroundObject->set_name(il2cpp_utils::newcsstr("_CustomBackground"));
         backgroundObject->set_layer(29);
         UnityEngine::Object::DontDestroyOnLoad(backgroundObject);
 
         // Material + shader management
         UnityEngine::Renderer* bgrenderer = backgroundObject->GetComponent<UnityEngine::Renderer*>();
-        backgroundMat = bgrenderer->get_material();
         bgrenderer->set_sortingOrder(-8192);
-        static auto set_shader = reinterpret_cast<function_ptr_t<void, UnityEngine::Material*, UnityEngine::Shader*>>(il2cpp_functions::resolve_icall("UnityEngine.Material::set_shader"));
-        set_shader(backgroundMat, UnityEngine::Shader::Find(il2cpp_utils::createcsstr("TextMeshPro/Sprite")));
-        backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
+        bgrenderer->set_material(LoadSkyMaterial());
+        backgroundMat = bgrenderer->get_material();
+        backgroundMat->SetTexture(il2cpp_utils::newcsstr("_MainTex"), backgroundTexture);
 
         // Set transforms
         UnityEngine::Transform* bgtrans = backgroundObject->get_transform();
@@ -109,7 +109,7 @@ void LoadBackground(std::string path)
         getLogger().info("%s", resulttxt.c_str());
 
         if (backgroundMat && success) {
-            backgroundMat->SetTexture(il2cpp_utils::createcsstr("_MainTex"), backgroundTexture);
+            backgroundMat->SetTexture(il2cpp_utils::newcsstr("_MainTex"), backgroundTexture);
         }
         else if (success) CreateBGObject();
     }
@@ -118,11 +118,9 @@ void LoadBackground(std::string path)
 void InitBackgrounds()
 {
     auto& modcfg = getConfig().config;
-    int success = mkdir(bgDirectoryPath.c_str(), 0777);
     std::string backgroundPath = bgDirectoryPath;
     backgroundPath += modcfg["selectedFile"].GetString();
-
-    if (success != 0 && fileexists(backgroundPath))
+    if (fileexists(backgroundPath))
     {
         LoadBackground(backgroundPath);
     }
@@ -185,6 +183,7 @@ extern "C" void setup(ModInfo& info) {
     info.version = "1.2.7";
     modInfo = info;
     bgDirectoryPath = getDataDir(info);
+    (void)mkdir(bgDirectoryPath.c_str(), 0777);
     getConfig().Load();
 }
 
