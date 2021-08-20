@@ -1,10 +1,10 @@
 #include "BGConfig.hpp"
 #include "EnvironmentHider.hpp"
 #include "Helpers/AssetHelper.hpp"
-#include "BackgroundEnvViewController.hpp"
-#include "BackgroundListViewController.hpp"
-#include "BackgroundConfigViewController.hpp"
-#include "BackgroundsFlowCoordinator.hpp"
+#include "UI/BackgroundEnvViewController.hpp"
+#include "UI/BackgroundListViewController.hpp"
+#include "UI/BackgroundConfigViewController.hpp"
+#include "UI/BackgroundsFlowCoordinator.hpp"
 using namespace CustomBackgrounds;
 
 #include "modloader/shared/modloader.hpp"
@@ -180,7 +180,7 @@ MAKE_HOOK_MATCH(MenuEnvManager_ShowEnv, &GlobalNamespace::MenuEnvironmentManager
 extern "C" void setup(ModInfo& info) {
 
     info.id = "CustomBackgrounds";
-    info.version = "1.2.7";
+    info.version = "1.3.0";
     modInfo = info;
     bgDirectoryPath = getDataDir(info);
     (void)mkdir(bgDirectoryPath.c_str(), 0777);
