@@ -1,6 +1,6 @@
 #include "main.hpp"
 #include "EnvironmentHider.hpp"
-#include "BackgroundListViewController.hpp"
+#include "UI/BackgroundListViewController.hpp"
 
 #include <dirent.h>
 #include <regex>

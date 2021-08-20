@@ -1,5 +1,5 @@
 #include "main.hpp"
-#include "BackgroundConfigViewController.hpp"
+#include "UI/BackgroundConfigViewController.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
 #include "questui/shared/CustomTypes/Components/Backgroundable.hpp"

@@ -1,6 +1,6 @@
 #include "main.hpp"
 #include "EnvironmentHider.hpp"
-#include "BackgroundEnvViewController.hpp"
+#include "UI/BackgroundEnvViewController.hpp"
 
 #include "questui/shared/ArrayUtil.hpp"
 #include "questui/shared/BeatSaberUI.hpp"

@@ -1,8 +1,8 @@
 #include "main.hpp"
-#include "BackgroundsFlowCoordinator.hpp"
-#include "BackgroundEnvViewController.hpp"
-#include "BackgroundListViewController.hpp"
-#include "BackgroundConfigViewController.hpp"
+#include "UI/BackgroundsFlowCoordinator.hpp"
+#include "UI/BackgroundEnvViewController.hpp"
+#include "UI/BackgroundListViewController.hpp"
+#include "UI/BackgroundConfigViewController.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
 #include "questui/shared/QuestUI.hpp"
