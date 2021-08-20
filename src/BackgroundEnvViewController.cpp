@@ -41,26 +41,26 @@ DEFINE_TYPE(CustomBackgrounds, BackgroundEnvViewController);
 Zenject::DiContainer* diContainer = nullptr;
 GlobalNamespace::EnvironmentOverrideSettingsPanelController* envPanel = nullptr;
 
-void FixModalView(HMUI::SimpleTextDropdown* dropdown)
-{
-    // lifted from questui as dependency injection weird
-    auto* physicsRaycaster = QuestUI::BeatSaberUI::GetPhysicsRaycasterWithCache();
-    if (physicsRaycaster) reinterpret_cast<VRUIControls::VRGraphicRaycaster*>(dropdown->GetComponentInChildren(csTypeOf(VRUIControls::VRGraphicRaycaster*), true))->physicsRaycaster = physicsRaycaster;
-    if (!diContainer) diContainer = QuestUI::ArrayUtil::First(UnityEngine::Resources::FindObjectsOfTypeAll<HMUI::TextSegmentedControl*>(), [](HMUI::TextSegmentedControl* x) { return to_utf8(csstrtostr(x->get_transform()->get_parent()->get_name())) == "PlayerStatisticsViewController" && x->container; })->container;
-    reinterpret_cast<HMUI::ModalView*>(dropdown->GetComponentInChildren(csTypeOf(HMUI::ModalView*), true))->container = diContainer;
-}
+// void FixModalView(HMUI::SimpleTextDropdown* dropdown)
+// {
+//     // lifted from questui as dependency injection weird
+//     auto* physicsRaycaster = QuestUI::BeatSaberUI::GetPhysicsRaycasterWithCache();
+//     if (physicsRaycaster) reinterpret_cast<VRUIControls::VRGraphicRaycaster*>(dropdown->GetComponentInChildren(csTypeOf(VRUIControls::VRGraphicRaycaster*), true))->physicsRaycaster = physicsRaycaster;
+//     if (!diContainer) diContainer = QuestUI::ArrayUtil::First(UnityEngine::Resources::FindObjectsOfTypeAll<HMUI::TextSegmentedControl*>(), [](HMUI::TextSegmentedControl* x) { return to_utf8(csstrtostr(x->get_transform()->get_parent()->get_name())) == "PlayerStatisticsViewController" && x->container; })->container;
+//     reinterpret_cast<HMUI::ModalView*>(dropdown->GetComponentInChildren(csTypeOf(HMUI::ModalView*), true))->container = diContainer;
+// }
 
-void OnToggleOverride()
-{
-    if (!envPanel) return;
-    auto* dropdownArray = envPanel->get_gameObject()->GetComponentsInChildren<HMUI::SimpleTextDropdown*>();
-    for (size_t i = 0; i < dropdownArray->Length(); i++)
-    {
-        HMUI::SimpleTextDropdown* dropdown = dropdownArray->values[i];
-        if (!dropdown || dropdown->GetComponent<GlobalNamespace::NumberTag*>()) return;
-        FixModalView(dropdown);
-    }
-}
+// void OnToggleOverride()
+// {
+//     if (!envPanel) return;
+//     auto* dropdownArray = envPanel->get_gameObject()->GetComponentsInChildren<HMUI::SimpleTextDropdown*>();
+//     for (size_t i = 0; i < dropdownArray->Length(); i++)
+//     {
+//         HMUI::SimpleTextDropdown* dropdown = dropdownArray->values[i];
+//         if (!dropdown || dropdown->GetComponent<GlobalNamespace::NumberTag*>()) return;
+//         FixModalView(dropdown);
+//     }
+// }
 
 void OnChangeHideEnv(bool newval)
 {
@@ -100,31 +100,32 @@ void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedTo
 
         // Bool settings
         this->envcontainer = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(container->get_rectTransform());
-        envcontainer->set_padding(UnityEngine::RectOffset::New_ctor(0, 0, 0, 30));
+        envcontainer->GetComponent<UnityEngine::UI::LayoutElement*>()->set_minWidth(25.0);
+        envcontainer->set_childControlHeight(true);
+        envcontainer->set_spacing(0.2f);
 
         bool enabled_initval = getConfig().config["enabled"].GetBool();
 
-        // Base game's 'Override Environment' panel
-        auto* playerData = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::PlayerDataModel*>()->values[0]->playerData;
-        auto* _envpanelref = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::EnvironmentOverrideSettingsPanelController*>()->values[0];
-        envPanel = UnityEngine::Object::Instantiate(_envpanelref, this->envcontainer->get_rectTransform());
-        auto* envtoggle = envPanel->overrideEnvironmentsToggle;
-        envPanel->get_gameObject()->SetActive(true);
-        envPanel->SetData(playerData->get_overrideEnvironmentSettings());
-        envPanel->Refresh();
-        if (!envtoggle->m_IsOn) QuestUI::BeatSaberUI::AddHoverHint(envtoggle->get_gameObject(), "Please activate this setting via the 'Gameplay Setup' panel.");
-        envPanel->GetComponentInChildren<UnityEngine::UI::VerticalLayoutGroup*>()->set_childAlignment(UnityEngine::TextAnchor::UpperRight);
-        auto* dropdownarray = envPanel->get_gameObject()->GetComponentsInChildren<HMUI::SimpleTextDropdown*>();
-        for (size_t i = 0; i < dropdownarray->Length(); i++)
-        {
-            HMUI::SimpleTextDropdown* dropdown = dropdownarray->values[i];
-            dropdown->get_gameObject()->AddComponent<GlobalNamespace::NumberTag*>();
-            FixModalView(dropdown);
-        }
+        // // Base game's 'Override Environment' panel
+        // auto* playerData = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::PlayerDataModel*>()->values[0]->playerData;
+        // auto* _envpanelref = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::EnvironmentOverrideSettingsPanelController*>()->values[0];
+        // envPanel = UnityEngine::Object::Instantiate(_envpanelref, this->envcontainer->get_rectTransform());
+        // auto* envtoggle = envPanel->overrideEnvironmentsToggle;
+        // envPanel->get_gameObject()->SetActive(true);
+        // envPanel->SetData(playerData->get_overrideEnvironmentSettings());
+        // envPanel->Refresh();
+        // if (!envtoggle->m_IsOn) QuestUI::BeatSaberUI::AddHoverHint(envtoggle->get_gameObject(), "Please activate this setting via the 'Gameplay Setup' panel.");
+        // envPanel->GetComponentInChildren<UnityEngine::UI::VerticalLayoutGroup*>()->set_childAlignment(UnityEngine::TextAnchor::UpperRight);
+        // auto* dropdownarray = envPanel->get_gameObject()->GetComponentsInChildren<HMUI::SimpleTextDropdown*>();
+        // for (size_t i = 0; i < dropdownarray->Length(); i++)
+        // {
+        //     HMUI::SimpleTextDropdown* dropdown = dropdownarray->values[i];
+        //     dropdown->get_gameObject()->AddComponent<GlobalNamespace::NumberTag*>();
+        //     FixModalView(dropdown);
+        // }
 
         auto* togglecontainer = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(container->get_rectTransform());
-        togglecontainer->set_padding(UnityEngine::RectOffset::New_ctor(0, 0, 0, 4));
-        togglecontainer->set_spacing(0.2f);
+        togglecontainer->GetComponent<UnityEngine::UI::ContentSizeFitter*>()->set_verticalFit(2);
 
         bool hideenv_initval = modcfg["hideEnvironment"].GetBool();
         auto* hideEnvToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Environment", hideenv_initval, UnityEngine::Vector2(0, 0), OnChangeHideEnv);
@@ -136,7 +137,7 @@ void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedTo
         auto* hideLasersToggle = QuestUI::BeatSaberUI::CreateToggle(togglecontainer->get_rectTransform(), "Hide Lights", hidelasers_initval, UnityEngine::Vector2(0, 0), OnChangeHideLasers);
 
     }
-    envPanel->overrideEnvironmentsToggle->set_interactable(envPanel->overrideEnvironmentsToggle->m_IsOn);
+    // envPanel->overrideEnvironmentsToggle->set_interactable(envPanel->overrideEnvironmentsToggle->m_IsOn);
 }
 
 void BackgroundEnvViewController::DidDeactivate(bool removedFromHierarchy, bool systemScreenDisabling)
