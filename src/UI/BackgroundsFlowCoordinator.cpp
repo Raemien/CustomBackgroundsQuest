@@ -32,6 +32,6 @@ void BackgroundsFlowCoordinator::DidActivate(bool firstActivation, bool addedToH
 void BackgroundsFlowCoordinator::BackButtonWasPressed(HMUI::ViewController* topView)
 {
     getConfig().Write();
-    HMUI::FlowCoordinator* settingsFC = QuestUI::GetModSettingsFlowCoordinator();
+    HMUI::FlowCoordinator* settingsFC = this->parentFlowCoordinator;
     settingsFC->DismissFlowCoordinator(this, (int)0, nullptr, false);
 }
