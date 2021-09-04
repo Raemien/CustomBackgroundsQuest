@@ -141,7 +141,7 @@ MAKE_HOOK_MATCH(SceneManager_SceneChanged, &UnityEngine::SceneManagement::SceneM
 MAKE_HOOK_MATCH(TrackLaneRing_Init, &GlobalNamespace::TrackLaneRing::Init, void, GlobalNamespace::TrackLaneRing* instance, UnityEngine::Vector3 pos, UnityEngine::Vector3 offset)
 {
     TrackLaneRing_Init(instance, pos, offset);
-    bool hide = getConfig().config["hideRings"].GetBool();
+    bool hide = getConfig().config["hideRings"].GetBool() && getConfig().config["enabled"].GetBool();
     auto* renderers = instance->GetComponentsInChildren<UnityEngine::Renderer*>();
     for (size_t i = 0; i < renderers->Length(); i++)
     {
@@ -154,7 +154,7 @@ MAKE_HOOK_MATCH(TrackLaneRing_Init, &GlobalNamespace::TrackLaneRing::Init, void,
 MAKE_HOOK_MATCH(Spectrogram_Awake, &GlobalNamespace::Spectrogram::Awake, void, GlobalNamespace::Spectrogram* instance)
 {
     Spectrogram_Awake(instance);
-    if (backgroundObject) HideGameEnv();
+    if (backgroundObject && getConfig().config["enabled"].GetBool()) HideGameEnv();
 }
 
 MAKE_HOOK_MATCH(MainCamera_Awake, &GlobalNamespace::MainCamera::Awake, void, GlobalNamespace::MainCamera* caminstance)
@@ -180,7 +180,7 @@ MAKE_HOOK_MATCH(MenuEnvManager_ShowEnv, &GlobalNamespace::MenuEnvironmentManager
 extern "C" void setup(ModInfo& info) {
 
     info.id = "CustomBackgrounds";
-    info.version = "1.3.0";
+    info.version = "1.3.1";
     modInfo = info;
     bgDirectoryPath = getDataDir(info);
     (void)mkdir(bgDirectoryPath.c_str(), 0777);
@@ -197,5 +197,5 @@ extern "C" void load() {
     INSTALL_HOOK(getLogger(), Spectrogram_Awake);
     INSTALL_HOOK(getLogger(), MainCamera_Awake);
     custom_types::Register::AutoRegister();
-    QuestUI::Register::RegisterModSettingsFlowCoordinator<BackgroundsFlowCoordinator*>(modInfo);
+    QuestUI::Register::RegisterMainMenuModSettingsFlowCoordinator<BackgroundsFlowCoordinator*>(modInfo);
 }
