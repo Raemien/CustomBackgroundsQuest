@@ -180,7 +180,7 @@ MAKE_HOOK_MATCH(MenuEnvManager_ShowEnv, &GlobalNamespace::MenuEnvironmentManager
 extern "C" void setup(ModInfo& info) {
 
     info.id = "CustomBackgrounds";
-    info.version = "1.3.1";
+    info.version = "1.3.2";
     modInfo = info;
     bgDirectoryPath = getDataDir(info);
     (void)mkdir(bgDirectoryPath.c_str(), 0777);
