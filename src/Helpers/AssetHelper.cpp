@@ -20,5 +20,7 @@ UnityEngine::Material* LoadSkyMaterial()
     static auto ab_LoadAllAssets = reinterpret_cast<function_ptr_t<Array<UnityEngine::Object*>*, UnityEngine::AssetBundle*, Il2CppString*, System::Type*>>(il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadAssetWithSubAssets_Internal"));
     Array<UnityEngine::Object*>* materialArray = ab_LoadAllAssets(bundle, il2cpp_utils::newcsstr(""), csTypeOf(UnityEngine::Material*));
     if (materialArray->Length() < 1) return nullptr;
-    return (UnityEngine::Material*)materialArray->values[0];
+    UnityEngine::Material* clonedMaterial = UnityEngine::Material::New_ctor(reinterpret_cast<UnityEngine::Material*>(materialArray->values[0]));
+    bundle->Unload(false);
+    return clonedMaterial;
 }
