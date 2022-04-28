@@ -25,7 +25,12 @@
     },
     {
       "id": "questui",
-      "versionRange": "^0.11.1",
+      "versionRange": "<=0.13.4",
+      "additionalData": {}
+    },
+    {
+      "id": "codegen",
+      "versionRange": "<=0.22.0",
       "additionalData": {}
     }
   ],
