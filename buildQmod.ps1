@@ -1,14 +1,108 @@
-# Builds a .zip file for loading with BMBF/QP
-$NDKPath = Get-Content $PSScriptRoot/ndkpath.txt
+Param(
+    [String]$qmodname="",
+    [Parameter(Mandatory=$false)]
+    [Switch]$clean
+)
 
-$buildScript = "$NDKPath/build/ndk-build"
-if (-not ($PSVersionTable.PSEdition -eq "Core")) {
-    $buildScript += ".cmd"
+if ($qmodName -eq "")
+{
+    echo "Give a proper qmod name and try again"
+    exit
+}
+$mod = "./mod.json"
+
+if(-not (Test-Path $mod)) {
+    echo "Please run qpm-rust qmod build before creating a qmod."
+    exit
 }
 
-& $buildScript NDK_PROJECT_PATH=$PSScriptRoot APP_BUILD_SCRIPT=$PSScriptRoot/Android.mk NDK_APPLICATION_MK=$PSScriptRoot/Application.mk -j 4
-Compress-Archive -Path  "./libs/arm64-v8a/libbeatsaber-hook_2_3_0.so",`
-                        "./libs/arm64-v8a/libcustombgs.so",`
-                        "./cover.png",`
-                        "./mod.json" -DestinationPath "./CustomBackgrounds.zip" -Update
-& copy-item -Force "./CustomBackgrounds.zip" "./CustomBackgrounds.qmod"
+$modJson = Get-Content $mod -Raw | ConvertFrom-Json
+
+$filelist = @($mod)
+
+$cover = "./" + $modJson.coverImage
+if ((-not ($cover -eq "./")) -and (Test-Path $cover))
+{ 
+    $filelist += ,$cover
+}
+
+foreach ($mod in $modJson.modFiles)
+{
+        $path = "./build/" + $mod
+    if (-not (Test-Path $path))
+    {
+        $path = "./extern/libs/" + $mod
+    }
+    $filelist += $path
+}
+
+foreach ($lib in $modJson.libraryFiles)
+{
+    $path = "./extern/libs/" + $lib
+    if (-not (Test-Path $path))
+    {
+        $path = "./build/" + $lib
+    }
+    $filelist += $path
+}
+
+if (Test-Path "./ExtraFiles")
+{
+    $extraFiles = @()
+    $extraEntries = Get-ChildItem ./ExtraFiles/* -Recurse
+
+    foreach ($entry in $extraEntries)
+    {
+        $mode = $entry | Select -Expand Mode
+        if ($mode.Contains("d"))
+        {
+            continue
+        }
+
+        # if not a dir
+        if (-not $entry.Directory.Name.Contains("ExtraFiles"))
+        {
+            $dir = $entry.Directory
+            $folderPath = $dir.Name + "/" + $entry.Name
+            while (($dir.Directory) -and (-not $dir.Directory.Name.Contains("ExtraFiles")))
+            {
+                $folderPath = $dir.Directory.Name + "/" + $folderPath
+            }
+
+            if ($folderPath.Contains("Icons")) 
+            {
+                continue;
+            }
+            $extraFiles += ,$folderPath
+        }
+        else
+        {
+            $extraFiles += ,$entry.Name
+        }
+    }
+
+    foreach ($file in $extraFiles)
+    {
+        $path = "./ExtraFiles/" + $file
+        $filelist += ,$path
+    } 
+}
+else
+{
+    echo "No ExtraFiles Directory Found"
+}
+
+$zip = $qmodName + ".zip"
+$qmod = $qmodName + ".qmod"
+
+if ($clean.IsPresent) {
+    echo "Making Clean Qmod"
+}
+
+if ((-not ($clean.IsPresent)) -and (Test-Path $qmod))
+{
+    Move-Item $qmod $zip -Force
+}
+
+Compress-Archive -Path $filelist -DestinationPath $zip -Update
+Move-Item $zip $qmod -Force
