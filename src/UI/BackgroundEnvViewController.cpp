@@ -90,7 +90,7 @@ void BackgroundEnvViewController::DidActivate(bool firstActivation, bool addedTo
 
         // Title
         auto* titlecontainer = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(container->get_rectTransform());
-        titlecontainer->get_gameObject()->AddComponent<QuestUI::Backgroundable*>()->ApplyBackground(il2cpp_utils::createcsstr("panel-top"));
+        titlecontainer->get_gameObject()->AddComponent<QuestUI::Backgroundable*>()->ApplyBackground("panel-top");
         titlecontainer->set_padding(UnityEngine::RectOffset::New_ctor(10, 10, 0, 0));
         titlecontainer->GetComponent<UnityEngine::UI::ContentSizeFitter*>()->set_horizontalFit(2);
 

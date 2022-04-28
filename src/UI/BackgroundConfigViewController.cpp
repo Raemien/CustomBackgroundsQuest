@@ -47,9 +47,9 @@ void OnChangeResolution(float fval)
     element->CurrentValue = newval;
     element->Increment = newval;
     if (resmap.count(newval) == 1) {
-        element->Text->set_text(il2cpp_utils::createcsstr(resmap[newval]));
+        element->Text->set_text(resmap[newval]);
     }
-    else element->Text->set_text(il2cpp_utils::createcsstr(std::to_string(newval) + " x " + std::to_string(std::round((float)newval * (2.0f / 3.0f)))));
+    else element->Text->set_text(std::to_string(newval) + " x " + std::to_string(std::round((float)newval * (2.0f / 3.0f))));
     modcfg["imageWidth"].SetInt(newval);
 }
 
@@ -60,7 +60,7 @@ void OnChangeRotation(float newval)
     if (newval < 0) newval = (360 - element->Increment);
     if (newval > 359) newval = 0;
     element->CurrentValue = newval;
-    element->Text->set_text(il2cpp_utils::createcsstr(std::to_string((int)newval)));
+    element->Text->set_text(std::to_string((int)newval));
     modcfg["rotationOffset"].SetFloat(newval);
     if (backgroundObject) backgroundObject->get_transform()->set_localEulerAngles(UnityEngine::Vector3(0, (newval - 90), 180));
 }
@@ -77,7 +77,7 @@ void BackgroundConfigViewController::DidActivate(bool firstActivation, bool adde
 
         // Title
         auto* titlecontainer = QuestUI::BeatSaberUI::CreateHorizontalLayoutGroup(container->get_rectTransform());
-        titlecontainer->get_gameObject()->AddComponent<QuestUI::Backgroundable*>()->ApplyBackground(il2cpp_utils::createcsstr("panel-top"));
+        titlecontainer->get_gameObject()->AddComponent<QuestUI::Backgroundable*>()->ApplyBackground("panel-top");
         titlecontainer->set_padding(UnityEngine::RectOffset::New_ctor(10, 10, 0, 0));
         titlecontainer->GetComponent<UnityEngine::UI::ContentSizeFitter*>()->set_horizontalFit(2);
 
@@ -92,7 +92,7 @@ void BackgroundConfigViewController::DidActivate(bool firstActivation, bool adde
         configcontainer->set_childControlHeight(true);
 
         int rotation_initval = modcfg["rotationOffset"].GetInt();
-        this->rotationSetting = QuestUI::BeatSaberUI::CreateIncrementSetting(configcontainer->get_rectTransform(), "Rotation Offset", 0, (int)15, rotation_initval, OnChangeRotation);;
+        this->rotationSetting = QuestUI::BeatSaberUI::CreateIncrementSetting(configcontainer->get_rectTransform(), "Rotation Offset", 0, (int)15, rotation_initval, OnChangeRotation);
         
         int width_initval = modcfg["imageWidth"].GetInt();
         this->resolutionSetting = QuestUI::BeatSaberUI::CreateIncrementSetting(configcontainer->get_rectTransform(), "Target Resolution", 0, width_initval, width_initval, OnChangeResolution);

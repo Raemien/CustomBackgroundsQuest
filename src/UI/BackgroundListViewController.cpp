@@ -22,6 +22,7 @@
 #include "TMPro/TextMeshProUGUI.hpp"
 
 using namespace CustomBackgrounds;
+
 DEFINE_TYPE(CustomBackgrounds, BackgroundListViewController);
 
 BackgroundListViewController* ListView;
@@ -41,9 +42,9 @@ void SelectImage()
 {
     for (UnityEngine::UI::Button* button : bgList)
     {
-        if (button->hasSelection) 
+        if (button->get_hasSelection())
         {
-            std::string filename = to_utf8(csstrtostr(button->GetComponentInChildren<TMPro::TextMeshProUGUI*>()->get_text()));
+            std::string filename = button->GetComponentInChildren<TMPro::TextMeshProUGUI*>()->get_text();
             getConfig().config["selectedFile"].SetString(filename, getConfig().config.GetAllocator());
             getConfig().Write();
             LoadBackground(bgDirectoryPath + filename);
@@ -53,7 +54,7 @@ void SelectImage()
 
 void RefreshList()
 {
-    if (ListView->listtxtgroup && ListView->listtxtgroup->m_CachedPtr.m_value) UnityEngine::GameObject::Destroy(ListView->listtxtgroup->get_gameObject()); 
+    if (ListView->listtxtgroup && ListView->listtxtgroup->dyn_m_CachedPtr().m_value) UnityEngine::GameObject::Destroy(ListView->listtxtgroup->get_gameObject());
     for (UnityEngine::UI::Button* button : bgList) UnityEngine::Object::Destroy(button->get_transform()->get_parent()->get_gameObject());
     bgList = {};
     DIR* imgdir = opendir(bgDirectoryPath.c_str());

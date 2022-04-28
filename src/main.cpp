@@ -9,7 +9,7 @@ using namespace CustomBackgrounds;
 
 #include "modloader/shared/modloader.hpp"
 #include "beatsaber-hook/shared/utils/logging.hpp"
-#include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
+#include "beatsaber-hook/shared/utils/il2cpp-utils.hpp"
 #include "beatsaber-hook/shared/utils/typedefs.h"
 #include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
@@ -72,7 +72,7 @@ void CreateBGObject()
     {
         // Create object
         backgroundObject = UnityEngine::GameObject::CreatePrimitive(UnityEngine::PrimitiveType::Sphere);
-        backgroundObject->set_name(il2cpp_utils::newcsstr("_CustomBackground"));
+        backgroundObject->set_name("_CustomBackground");
         backgroundObject->set_layer(29);
         UnityEngine::Object::DontDestroyOnLoad(backgroundObject);
 
@@ -81,7 +81,7 @@ void CreateBGObject()
         bgrenderer->set_sortingOrder(-8192);
         bgrenderer->set_material(LoadSkyMaterial());
         backgroundMat = bgrenderer->get_material();
-        backgroundMat->SetTexture(il2cpp_utils::newcsstr("_MainTex"), backgroundTexture);
+        backgroundMat->SetTexture("_MainTex", backgroundTexture);
 
         // Set transforms
         UnityEngine::Transform* bgtrans = backgroundObject->get_transform();
@@ -109,7 +109,7 @@ void LoadBackground(std::string path)
         getLogger().info("%s", resulttxt.c_str());
 
         if (backgroundMat && success) {
-            backgroundMat->SetTexture(il2cpp_utils::newcsstr("_MainTex"), backgroundTexture);
+            backgroundMat->SetTexture("_MainTex", backgroundTexture);
         }
         else if (success) CreateBGObject();
     }
@@ -142,7 +142,7 @@ MAKE_HOOK_MATCH(TrackLaneRing_Init, &GlobalNamespace::TrackLaneRing::Init, void,
 {
     TrackLaneRing_Init(instance, pos, offset);
     bool hide = getConfig().config["hideRings"].GetBool() && getConfig().config["enabled"].GetBool();
-    auto* renderers = instance->GetComponentsInChildren<UnityEngine::Renderer*>();
+    auto renderers = instance->GetComponentsInChildren<UnityEngine::Renderer*>();
     for (size_t i = 0; i < renderers->Length(); i++)
     {
         UnityEngine::Renderer* rend = renderers->values[i];
@@ -162,7 +162,7 @@ MAKE_HOOK_MATCH(MainCamera_Awake, &GlobalNamespace::MainCamera::Awake, void, Glo
     MainCamera_Awake(caminstance);
     auto& modcfg = getConfig().config;
     Il2CppString* sceneName = UnityEngine::SceneManagement::SceneManager::GetActiveScene().get_name();
-    UnityEngine::Camera* maincam = caminstance->camera;
+    UnityEngine::Camera* maincam = caminstance->dyn__camera();
     if (maincam && sceneName == il2cpp_utils::newcsstr("GameCore") && modcfg["enabled"].GetBool())
     {
         mainOriginalCullMask = (mainOriginalCullMask == 0) ? maincam->get_cullingMask() : mainOriginalCullMask;
@@ -179,7 +179,7 @@ MAKE_HOOK_MATCH(MenuEnvManager_ShowEnv, &GlobalNamespace::MenuEnvironmentManager
 
 extern "C" void setup(ModInfo& info) {
 
-    info.id = "CustomBackgrounds";
+    info.id = MOD_ID;
     info.version = "1.3.2";
     modInfo = info;
     bgDirectoryPath = getDataDir(info);

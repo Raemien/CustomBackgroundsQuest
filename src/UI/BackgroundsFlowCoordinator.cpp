@@ -19,7 +19,7 @@ void BackgroundsFlowCoordinator::DidActivate(bool firstActivation, bool addedToH
 {
     if (firstActivation) 
     {
-        this->SetTitle(il2cpp_utils::createcsstr("Backgrounds"), (int)1);
+        this->SetTitle("Backgrounds", 1);
         this->showBackButton = true;
 
         if (!this->bgListView) this->bgListView = QuestUI::BeatSaberUI::CreateViewController<BackgroundListViewController*>();
@@ -33,5 +33,5 @@ void BackgroundsFlowCoordinator::BackButtonWasPressed(HMUI::ViewController* topV
 {
     getConfig().Write();
     HMUI::FlowCoordinator* settingsFC = this->parentFlowCoordinator;
-    settingsFC->DismissFlowCoordinator(this, (int)0, nullptr, false);
+    settingsFC->DismissFlowCoordinator(this, 0, nullptr, false);
 }

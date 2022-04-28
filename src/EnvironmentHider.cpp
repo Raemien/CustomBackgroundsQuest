@@ -7,7 +7,7 @@
 #include "UnityEngine/MeshRenderer.hpp"
 #include "GlobalNamespace/LightManager.hpp"
 #include "GlobalNamespace/MultiplayerLobbyAvatarPlace.hpp"
-#include "beatsaber-hook/shared/utils/il2cpp-utils.hpp" 
+#include "beatsaber-hook/shared/utils/il2cpp-utils.hpp"
 #include "beatsaber-hook/shared/utils/typedefs.h"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
 #include "custom-types/shared/coroutine.hpp"
@@ -30,7 +30,7 @@ bool getBGActive()
 
 UnityEngine::GameObject* FindMultiplayerPlatform()
 {
-    Array<GlobalNamespace::MultiplayerLobbyAvatarPlace*>* platforms = Resources::FindObjectsOfTypeAll<GlobalNamespace::MultiplayerLobbyAvatarPlace*>();
+    auto platforms = Resources::FindObjectsOfTypeAll<GlobalNamespace::MultiplayerLobbyAvatarPlace*>();
     for (size_t i = 0; i < platforms->Length(); i++)
     {
         UnityEngine::Transform* plat = platforms->values[i]->get_transform();
@@ -45,12 +45,12 @@ void HideChildRenderers(GameObject* obj, bool onlymeshes, bool unhide = false, b
 {
     if (obj == nullptr) return;
     bool enabled = !getBGActive() || unhide;
-    auto* rendarray = onlymeshes ? (Array<Renderer*>*)obj->GetComponentsInChildren<MeshRenderer*>() : obj->GetComponentsInChildren<Renderer*>();
+    auto rendarray = onlymeshes ? (ArrayW<Renderer*>)obj->GetComponentsInChildren<MeshRenderer*>() : obj->GetComponentsInChildren<Renderer*>();
     for (size_t i = 0; i < rendarray->Length(); i++)
     {
         Renderer* renderer = (Renderer*)rendarray->values[i];
         if (!ignorelayer && renderer->get_gameObject()->get_layer() == 13) continue;
-        if (!renderer || !renderer->m_CachedPtr) continue;
+        if (!renderer || !renderer->dyn_m_CachedPtr()) continue;
         renderer->set_enabled(enabled);
     }
 }
@@ -58,12 +58,12 @@ void HideChildRenderers(GameObject* obj, bool onlymeshes, bool unhide = false, b
 custom_types::Helpers::Coroutine HideChildLights(GameObject* obj, bool unhide = false)
 {
     if (obj == nullptr) co_return;
-    co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(UnityEngine::WaitForSeconds::New_ctor(0.5f)));
-    auto* rendarray = obj->GetComponentsInChildren<Renderer*>();
+    co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForSeconds::New_ctor(0.5f));
+    auto rendarray = obj->GetComponentsInChildren<Renderer*>();
     for (size_t i = 0; i < rendarray->Length(); i++)
     {
         Renderer* renderer = (Renderer*)rendarray->values[i];
-        if (!renderer || !renderer->m_CachedPtr || renderer->GetComponent<GlobalNamespace::LightManager*>()) continue;
+        if (!renderer || !renderer->dyn_m_CachedPtr() || renderer->GetComponent<GlobalNamespace::LightManager*>()) continue;
         if (!std::regex_search(to_utf8(csstrtostr(renderer->get_name())), std::regex("bloom|light", std::regex::icase)) && renderer->get_gameObject()->get_layer() != 13) continue;
         renderer->set_enabled(unhide);
     }
@@ -72,14 +72,14 @@ custom_types::Helpers::Coroutine HideChildLights(GameObject* obj, bool unhide = 
 
 void HideMenuEnv()
 {
-    bool ismulti = Resources::FindObjectsOfTypeAll<GlobalNamespace::MenuEnvironmentManager*>()->values[0]->prevMenuEnvironmentType == (int)2;
+    bool ismulti = Resources::FindObjectsOfTypeAll<GlobalNamespace::MenuEnvironmentManager*>()->values[0]->dyn__prevMenuEnvironmentType() == 2;
     bool bgActive = getBGActive();
     if (!ismulti)
     {
         // Find Objects
-        auto* floorObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironmentManager/DefaultMenuEnvironment/BasicMenuGround"));
-        auto* notesObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironmentManager/DefaultMenuEnvironment/Notes"));
-        auto* notePileObj = GameObject::Find(il2cpp_utils::createcsstr("MenuEnvironmentManager/DefaultMenuEnvironment/PileOfNotes"));
+        auto* floorObj = GameObject::Find("MenuEnvironmentManager/DefaultMenuEnvironment/BasicMenuGround");
+        auto* notesObj = GameObject::Find("MenuEnvironmentManager/DefaultMenuEnvironment/Notes");
+        auto* notePileObj = GameObject::Find("MenuEnvironmentManager/DefaultMenuEnvironment/PileOfNotes");
         auto* multiEnvObj = FindMultiplayerPlatform();
         
         // Apply Visibility
@@ -89,21 +89,21 @@ void HideMenuEnv()
         if (floorObj) floorObj->GetComponent<MeshRenderer*>()->set_enabled(!bgActive);
         if (bgActive) {
             HideChildRenderers(multiEnvObj, false, false, true);
-            HideChildRenderers(multiEnvObj->Find(il2cpp_utils::createcsstr("LobbyAvatarPlace")), false, true);
+            HideChildRenderers(multiEnvObj->Find("LobbyAvatarPlace"), false, true);
         }
     }
 }
 
 void HideGameEnv()
 {
-    GameObject* environmentObj = GameObject::Find(il2cpp_utils::createcsstr("Environment"));
-    GameObject* playersPlaceObj = GameObject::Find(il2cpp_utils::createcsstr("Environment/PlayersPlace"));
-    GameObject* coreLightingObj = GameObject::Find(il2cpp_utils::createcsstr("Environment/CoreLighting"));
+    GameObject* environmentObj = GameObject::Find("Environment");
+    GameObject* playersPlaceObj = GameObject::Find("Environment/PlayersPlace");
+    GameObject* coreLightingObj = GameObject::Find("Environment/CoreLighting");
     
     if (getConfig().config["hideLasers"].GetBool())
     {
         auto* behaviour = environmentObj->GetComponent<MonoBehaviour*>();
-        behaviour->StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(custom_types::Helpers::CoroutineHelper::New(HideChildLights(environmentObj))));
+        behaviour->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(HideChildLights(environmentObj)));
     }
     if (getConfig().config["hideEnvironment"].GetBool())
     {
