@@ -1,33 +1,63 @@
 {
+  "version": "0.2.0",
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
     "name": "CustomBackgrounds",
     "id": "CustomBackgrounds",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "url": null,
-    "additionalData": {}
+    "additionalData": {
+      "overrideSoName": "libCustomBackgrounds.so",
+      "cmake": true
+    }
+  },
+  "workspace": {
+    "scripts": {
+      "build": [
+        "pwsh ./scripts/build.ps1 -clean"
+      ],
+      "copy": [
+        "pwsh ./scripts/copy.ps1"
+      ],
+      "logcat": [
+        "pwsh ./scripts/start-logging.ps1"
+      ],
+      "qmod": [
+        "pwsh ./scripts/build.ps1",
+        "pwsh ./scripts/createqmod.ps1"
+      ],
+      "restart": [
+        "pwsh ./scripts/restart-game.ps1"
+      ],
+      "stack": [
+        "pwsh ./scripts/ndk-stack.ps1"
+      ],
+      "tomb": [
+        "pwsh ./scripts/pull-tombstone.ps1"
+      ]
+    }
   },
   "dependencies": [
     {
-      "id": "modloader",
-      "versionRange": "*",
+      "id": "beatsaber-hook",
+      "versionRange": "^5.0.8",
       "additionalData": {}
     },
     {
-      "id": "beatsaber-hook",
-      "versionRange": "^2.0.0",
-      "additionalData": {
-        "extraFiles": [
-          "src/inline-hook"
-        ]
-      }
+      "id": "scotland2",
+      "versionRange": "^0.1.3",
+      "additionalData": {}
     },
     {
-      "id": "questui",
-      "versionRange": "^0.11.1",
+      "id": "custom-types",
+      "versionRange": "^0.16.16",
+      "additionalData": {}
+    },
+    {
+      "id": "bsml",
+      "versionRange": "^0.4.6",
       "additionalData": {}
     }
-  ],
-  "additionalData": {}
+  ]
 }
