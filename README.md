@@ -1,4 +1,4 @@
-# CustomBackgrounds
+# Custom Backgrounds
 
 Import your own 360 images as custom skyboxes!\nScans the 'CustomBackgrounds' ModData folder for imported images.
 

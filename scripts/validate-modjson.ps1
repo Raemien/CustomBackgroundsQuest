@@ -2,7 +2,7 @@ $mod = "./mod.json"
 
 if (-not (Test-Path -Path $mod)) {
     if (Test-Path -Path ".\mod.template.json") {
-        & qpm qmod build
+        & qpm-rust qmod build
         if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
         }

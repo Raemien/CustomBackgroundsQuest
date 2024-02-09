@@ -3,19 +3,19 @@
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
-    "name": "CustomBackgrounds",
-    "id": "CustomBackgrounds",
+    "name": "Custom Backgrounds",
+    "id": "custombackgrounds",
     "version": "0.1.0",
     "url": null,
     "additionalData": {
-      "overrideSoName": "libCustomBackgrounds.so",
+      "overrideSoName": "libcustombackgrounds.so",
       "cmake": true
     }
   },
   "workspace": {
     "scripts": {
       "build": [
-        "pwsh ./scripts/build.ps1 -clean"
+        "pwsh ./scripts/build.ps1"
       ],
       "copy": [
         "pwsh ./scripts/copy.ps1"
@@ -40,23 +40,23 @@
   },
   "dependencies": [
     {
+      "id": "modloader",
+      "versionRange": "=1.2.3",
+      "additionalData": {}
+    },
+    {
       "id": "beatsaber-hook",
-      "versionRange": "^5.0.8",
+      "versionRange": "^3.14.0",
       "additionalData": {}
     },
     {
-      "id": "scotland2",
-      "versionRange": "^0.1.3",
+      "id": "codegen",
+      "versionRange": "^0.33.0",
       "additionalData": {}
     },
     {
-      "id": "custom-types",
-      "versionRange": "^0.16.16",
-      "additionalData": {}
-    },
-    {
-      "id": "bsml",
-      "versionRange": "^0.4.6",
+      "id": "questui",
+      "versionRange": "^0.17.12",
       "additionalData": {}
     }
   ]

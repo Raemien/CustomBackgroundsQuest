@@ -3,14 +3,13 @@
   "_QPVersion": "0.1.1",
   "name": "${mod_name}",
   "id": "${mod_id}",
-  "author": "Raemien",
+  "author": "undefined",
   "version": "0.1.0",
   "packageId": "com.beatgames.beatsaber",
-  "packageVersion": "1.34.2_7115288407",
+  "packageVersion": "1.22.0",
   "description": "Import your own 360 images as custom skyboxes!\nScans the 'CustomBackgrounds' ModData folder for imported images.",
   "dependencies": [],
-  "modFiles": [],
-  "lateModFiles": ["${binary}"],
+  "modFiles": ["${binary}"],
   "libraryFiles": [],
   "fileCopies": []
 }

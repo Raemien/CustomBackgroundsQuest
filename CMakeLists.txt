@@ -2,7 +2,7 @@
 include(qpm_defines.cmake)
 
 # override mod id
-set(MOD_ID "CustomBackgrounds")
+set(MOD_ID "custombackgrounds")
 
 # Enable link time optimization
 # In my experience, this can be highly unstable but it nets a huge size optimization and likely performance
@@ -26,7 +26,7 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # compile options used
-add_compile_options(-frtti -fexceptions -fvisibility=hidden -fPIE -fPIC)
+add_compile_options(-frtti -fexceptions)
 add_compile_options(-O3)
 # compile definitions used
 add_compile_definitions(VERSION=\"${MOD_VERSION}\")
